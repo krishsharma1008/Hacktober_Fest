@@ -1,9 +1,5 @@
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-=======
 import { useQuery } from "@tanstack/react-query";
->>>>>>> 08c7e0b (Add project interactions, migrations, and documentation - Hacktoberfest updates)
 import { Search, Grid3x3, List, Heart, Eye, ExternalLink, Github, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,7 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useProjectInteractions } from "@/hooks/use-project-interactions";
-import { useAuth } from "@/contexts/AuthContext";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Project = Tables<"projects">;
 
 const tags = [
   "All", "AI/ML", "Web", "Mobile", "Cloud", "Automation", 
@@ -64,15 +62,11 @@ const ProjectLikeButton = ({ projectId, likes }: { projectId: string; likes: num
 export const ProjectGalleryTab = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>(["All"]);
   const [sortBy, setSortBy] = useState("recent");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [selectedProject, setSelectedProject] = useState<any>(null);
-<<<<<<< HEAD
-  const [likedProjects, setLikedProjects] = useState<Set<string>>(new Set());
-=======
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const selectedProjectInteractions = useProjectInteractions(selectedProject?.id || '');
 
   // Record view when project modal opens
@@ -81,9 +75,8 @@ export const ProjectGalleryTab = () => {
       selectedProjectInteractions.recordView();
     }
   }, [selectedProject?.id]);
->>>>>>> 08c7e0b (Add project interactions, migrations, and documentation - Hacktoberfest updates)
 
-  const { data: projects = [], isLoading } = useQuery({
+  const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ['projects'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -93,70 +86,9 @@ export const ProjectGalleryTab = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data || [];
+      return (data || []) as Project[];
     }
   });
-
-  // Load liked projects from localStorage
-  useEffect(() => {
-    if (user) {
-      const liked = new Set<string>();
-      projects.forEach(project => {
-        if (localStorage.getItem(`project_liked_${project.id}_${user.id}`)) {
-          liked.add(project.id);
-        }
-      });
-      setLikedProjects(liked);
-    }
-  }, [user, projects]);
-
-  const likeMutation = useMutation({
-    mutationFn: async ({ projectId, currentLikes, isLiked }: { projectId: string, currentLikes: number, isLiked: boolean }) => {
-      const newLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
-      
-      const { error } = await supabase
-        .from('projects')
-        .update({ likes: newLikes })
-        .eq('id', projectId);
-      
-      if (error) throw error;
-      
-      return { projectId, newLikes, isLiked };
-    },
-    onSuccess: ({ projectId, isLiked }) => {
-      if (user) {
-        if (isLiked) {
-          localStorage.removeItem(`project_liked_${projectId}_${user.id}`);
-          setLikedProjects(prev => {
-            const next = new Set(prev);
-            next.delete(projectId);
-            return next;
-          });
-        } else {
-          localStorage.setItem(`project_liked_${projectId}_${user.id}`, 'true');
-          setLikedProjects(prev => new Set(prev).add(projectId));
-        }
-      }
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-    },
-    onError: () => {
-      toast.error('Failed to update like');
-    }
-  });
-
-  const handleLike = (e: React.MouseEvent, project: any) => {
-    e.stopPropagation();
-    if (!user) {
-      toast.error('Please sign in to like projects');
-      return;
-    }
-    const isLiked = likedProjects.has(project.id);
-    likeMutation.mutate({ 
-      projectId: project.id, 
-      currentLikes: project.likes || 0,
-      isLiked 
-    });
-  };
 
   const toggleTag = (tag: string) => {
     if (tag === "All") {
@@ -320,29 +252,12 @@ export const ProjectGalleryTab = () => {
                       </Badge>
                     ))}
                   </div>
-<<<<<<< HEAD
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4 text-sm">
-                      <button
-                        onClick={(e) => handleLike(e, project)}
-                        className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        <Heart className={`w-4 h-4 ${likedProjects.has(project.id) ? 'fill-current text-primary' : ''}`} />
-                        {project.likes || 0}
-                      </button>
-                      <span className="flex items-center gap-1 text-muted-foreground">
-                        <Eye className="w-4 h-4" />
-                        {project.views || 0}
-                      </span>
-                    </div>
-=======
                   <div className="flex items-center gap-4 text-sm">
                     <ProjectLikeButton projectId={project.id} likes={project.likes || 0} />
                     <span className="flex items-center gap-1 text-muted-foreground">
                       <Eye className="w-4 h-4" />
                       {project.views || 0}
                     </span>
->>>>>>> 08c7e0b (Add project interactions, migrations, and documentation - Hacktoberfest updates)
                   </div>
                 </CardContent>
               </Card>
@@ -351,8 +266,6 @@ export const ProjectGalleryTab = () => {
         </div>
       )}
 
-<<<<<<< HEAD
-=======
       {/* Project Modal */}
       <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
@@ -474,7 +387,6 @@ export const ProjectGalleryTab = () => {
           )}
         </DialogContent>
       </Dialog>
->>>>>>> 08c7e0b (Add project interactions, migrations, and documentation - Hacktoberfest updates)
     </div>
   );
 };
