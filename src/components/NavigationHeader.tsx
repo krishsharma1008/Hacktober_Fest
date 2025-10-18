@@ -37,10 +37,6 @@ export const NavigationHeader = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <img src={zapcomLogo} alt="Zapcom" className="h-10 w-auto" />
-            <div>
-              <div className="font-bold text-lg leading-tight">Zapminds</div>
-              <div className="text-xs text-muted-foreground">Innovation by Zapcom</div>
-            </div>
           </Link>
 
           {/* Desktop Navigation */}

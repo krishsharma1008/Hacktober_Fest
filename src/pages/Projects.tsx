@@ -4,9 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, Eye, Github, ExternalLink } from 'lucide-react';
+import { Loader2, Eye, Heart, Github, ExternalLink } from 'lucide-react';
 import { NavigationHeader } from '@/components/NavigationHeader';
 import { Footer } from '@/components/Footer';
+import { useProjectInteractions } from '@/hooks/use-project-interactions';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Project {
   id: string;
@@ -20,6 +22,36 @@ interface Project {
   views: number;
   likes: number;
 }
+
+// Project Like Button Component
+const ProjectLikeButton = ({ projectId, likes }: { projectId: string; likes: number }) => {
+  const { userLiked, toggleLike, isTogglingLike } = useProjectInteractions(projectId);
+  const { user } = useAuth();
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      return; // Hook will show toast
+    }
+    toggleLike();
+  };
+
+  return (
+    <button
+      onClick={handleLikeClick}
+      disabled={isTogglingLike}
+      className="flex items-center gap-1 text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
+      title={user ? (userLiked ? 'Unlike' : 'Like') : 'Sign in to like'}
+    >
+      <Heart 
+        className={`w-4 h-4 transition-all ${
+          userLiked ? 'fill-red-500 text-red-500' : ''
+        } ${isTogglingLike ? 'scale-110' : ''}`} 
+      />
+      {likes || 0}
+    </button>
+  );
+};
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -102,10 +134,11 @@ const Projects = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
+                  <div className="flex items-center gap-4 text-sm">
+                    <ProjectLikeButton projectId={project.id} likes={project.likes || 0} />
+                    <span className="flex items-center gap-1 text-muted-foreground">
                       <Eye className="h-4 w-4" />
-                      {project.views}
+                      {project.views || 0}
                     </span>
                   </div>
 

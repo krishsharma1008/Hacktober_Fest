@@ -14,16 +14,352 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          id: string
+          email: string
+          full_name: string | null
+          team_name: string | null
+          linkedin: string | null
+          github: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          email: string
+          full_name?: string | null
+          team_name?: string | null
+          linkedin?: string | null
+          github?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          full_name?: string | null
+          team_name?: string | null
+          linkedin?: string | null
+          github?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      projects: {
+        Row: {
+          id: string
+          team_name: string
+          title: string
+          description: string | null
+          problem: string | null
+          solution: string | null
+          tech_stack: string[] | null
+          learnings: string | null
+          demo_video_url: string | null
+          ppt_url: string | null
+          github_url: string | null
+          presentation_url: string | null
+          images: string[] | null
+          tags: string[] | null
+          likes: number
+          views: number
+          status: string
+          created_by: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          team_name: string
+          title: string
+          description?: string | null
+          problem?: string | null
+          solution?: string | null
+          tech_stack?: string[] | null
+          learnings?: string | null
+          demo_video_url?: string | null
+          ppt_url?: string | null
+          github_url?: string | null
+          presentation_url?: string | null
+          images?: string[] | null
+          tags?: string[] | null
+          likes?: number
+          views?: number
+          status?: string
+          created_by: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          team_name?: string
+          title?: string
+          description?: string | null
+          problem?: string | null
+          solution?: string | null
+          tech_stack?: string[] | null
+          learnings?: string | null
+          demo_video_url?: string | null
+          ppt_url?: string | null
+          github_url?: string | null
+          presentation_url?: string | null
+          images?: string[] | null
+          tags?: string[] | null
+          likes?: number
+          views?: number
+          status?: string
+          created_by?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      project_likes: {
+        Row: {
+          id: string
+          project_id: string
+          user_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          user_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          user_id?: string
+          created_at?: string
+        }
+      }
+      project_views: {
+        Row: {
+          id: string
+          project_id: string
+          user_id: string | null
+          ip_address: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          user_id?: string | null
+          ip_address?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          user_id?: string | null
+          ip_address?: string | null
+          created_at?: string
+        }
+      }
+      user_roles: {
+        Row: {
+          id: string
+          user_id: string
+          role: 'user' | 'admin' | 'judge'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          role?: 'user' | 'admin' | 'judge'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          role?: 'user' | 'admin' | 'judge'
+          created_at?: string
+        }
+      }
+      judge_feedback: {
+        Row: {
+          id: string
+          project_id: string
+          judge_id: string
+          score: number | null
+          comment: string | null
+          note: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          judge_id: string
+          score?: number | null
+          comment?: string | null
+          note?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          judge_id?: string
+          score?: number | null
+          comment?: string | null
+          note?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      updates: {
+        Row: {
+          id: string
+          title: string
+          content: string
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          content: string
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          content?: string
+          created_by?: string
+          created_at?: string
+        }
+      }
+      discussions: {
+        Row: {
+          id: string
+          title: string
+          content: string
+          created_by: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          content: string
+          created_by: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          content?: string
+          created_by?: string
+          created_at?: string
+        }
+      }
+      registrations: {
+        Row: {
+          id: string
+          team_name: string
+          leader_id: string
+          member1_name: string | null
+          member1_email: string | null
+          member1_phone: string | null
+          member1_designation: string | null
+          member2_name: string | null
+          member2_email: string | null
+          member2_phone: string | null
+          member2_designation: string | null
+          member3_name: string | null
+          member3_email: string | null
+          member3_phone: string | null
+          member3_designation: string | null
+          member4_name: string | null
+          member4_email: string | null
+          member4_phone: string | null
+          member4_designation: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          team_name: string
+          leader_id: string
+          member1_name?: string | null
+          member1_email?: string | null
+          member1_phone?: string | null
+          member1_designation?: string | null
+          member2_name?: string | null
+          member2_email?: string | null
+          member2_phone?: string | null
+          member2_designation?: string | null
+          member3_name?: string | null
+          member3_email?: string | null
+          member3_phone?: string | null
+          member3_designation?: string | null
+          member4_name?: string | null
+          member4_email?: string | null
+          member4_phone?: string | null
+          member4_designation?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          team_name?: string
+          leader_id?: string
+          member1_name?: string | null
+          member1_email?: string | null
+          member1_phone?: string | null
+          member1_designation?: string | null
+          member2_name?: string | null
+          member2_email?: string | null
+          member2_phone?: string | null
+          member2_designation?: string | null
+          member3_name?: string | null
+          member3_email?: string | null
+          member3_phone?: string | null
+          member3_designation?: string | null
+          member4_name?: string | null
+          member4_email?: string | null
+          member4_phone?: string | null
+          member4_designation?: string | null
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      toggle_project_like: {
+        Args: {
+          p_project_id: string
+        }
+        Returns: {
+          liked: boolean
+          total_likes: number
+        }[]
+      }
+      record_project_view: {
+        Args: {
+          p_project_id: string
+          p_ip_address?: string
+        }
+        Returns: number
+      }
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: 'user' | 'admin' | 'judge'
+        }
+        Returns: boolean
+      }
+      get_user_role: {
+        Args: {
+          _user_id: string
+        }
+        Returns: 'user' | 'admin' | 'judge'
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: 'user' | 'admin' | 'judge'
     }
     CompositeTypes: {
       [_ in never]: never

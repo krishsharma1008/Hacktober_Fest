@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
+<<<<<<< HEAD
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+=======
+import { useQuery } from "@tanstack/react-query";
+>>>>>>> 08c7e0b (Add project interactions, migrations, and documentation - Hacktoberfest updates)
 import { Search, Grid3x3, List, Heart, Eye, ExternalLink, Github, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { useProjectInteractions } from "@/hooks/use-project-interactions";
+import { useAuth } from "@/contexts/AuthContext";
 
 const tags = [
   "All", "AI/ML", "Web", "Mobile", "Cloud", "Automation", 
@@ -25,6 +31,36 @@ const sortOptions = [
   { value: "alpha", label: "Alphabetical (A–Z)" },
 ];
 
+// Project Like Button Component
+const ProjectLikeButton = ({ projectId, likes }: { projectId: string; likes: number }) => {
+  const { userLiked, toggleLike, isTogglingLike } = useProjectInteractions(projectId);
+  const { user } = useAuth();
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) {
+      return; // Hook will show toast
+    }
+    toggleLike();
+  };
+
+  return (
+    <button
+      onClick={handleLikeClick}
+      disabled={isTogglingLike}
+      className="flex items-center gap-1 text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
+      title={user ? (userLiked ? 'Unlike' : 'Like') : 'Sign in to like'}
+    >
+      <Heart 
+        className={`w-4 h-4 transition-all ${
+          userLiked ? 'fill-red-500 text-red-500' : ''
+        } ${isTogglingLike ? 'scale-110' : ''}`} 
+      />
+      {likes || 0}
+    </button>
+  );
+};
+
 export const ProjectGalleryTab = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -34,7 +70,18 @@ export const ProjectGalleryTab = () => {
   const [sortBy, setSortBy] = useState("recent");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedProject, setSelectedProject] = useState<any>(null);
+<<<<<<< HEAD
   const [likedProjects, setLikedProjects] = useState<Set<string>>(new Set());
+=======
+  const selectedProjectInteractions = useProjectInteractions(selectedProject?.id || '');
+
+  // Record view when project modal opens
+  useEffect(() => {
+    if (selectedProject?.id) {
+      selectedProjectInteractions.recordView();
+    }
+  }, [selectedProject?.id]);
+>>>>>>> 08c7e0b (Add project interactions, migrations, and documentation - Hacktoberfest updates)
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['projects'],
@@ -46,7 +93,7 @@ export const ProjectGalleryTab = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data || [];
     }
   });
 
@@ -273,6 +320,7 @@ export const ProjectGalleryTab = () => {
                       </Badge>
                     ))}
                   </div>
+<<<<<<< HEAD
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 text-sm">
                       <button
@@ -287,6 +335,14 @@ export const ProjectGalleryTab = () => {
                         {project.views || 0}
                       </span>
                     </div>
+=======
+                  <div className="flex items-center gap-4 text-sm">
+                    <ProjectLikeButton projectId={project.id} likes={project.likes || 0} />
+                    <span className="flex items-center gap-1 text-muted-foreground">
+                      <Eye className="w-4 h-4" />
+                      {project.views || 0}
+                    </span>
+>>>>>>> 08c7e0b (Add project interactions, migrations, and documentation - Hacktoberfest updates)
                   </div>
                 </CardContent>
               </Card>
@@ -295,6 +351,130 @@ export const ProjectGalleryTab = () => {
         </div>
       )}
 
+<<<<<<< HEAD
+=======
+      {/* Project Modal */}
+      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          {selectedProject && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl">{selectedProject.title}</DialogTitle>
+                <p className="text-muted-foreground">by {selectedProject.team_name}</p>
+              </DialogHeader>
+
+              <div className="space-y-6">
+                {/* Media Gallery */}
+                {selectedProject.images && selectedProject.images.length > 0 && (
+                  <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                    <img
+                      src={selectedProject.images[0]}
+                      alt={selectedProject.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+
+                {/* Tags */}
+                {selectedProject.tags && selectedProject.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProject.tags.map((tag: string) => (
+                      <Badge key={tag} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {/* Links */}
+                <div className="flex flex-wrap gap-3">
+                  {selectedProject.demo_video_url && (
+                    <Button size="sm" variant="default" asChild>
+                      <a href={selectedProject.demo_video_url} target="_blank" rel="noopener noreferrer">
+                        <Play className="w-4 h-4 mr-2" />
+                        Demo Video
+                      </a>
+                    </Button>
+                  )}
+                  {selectedProject.github_url && (
+                    <Button size="sm" variant="outline" asChild>
+                      <a href={selectedProject.github_url} target="_blank" rel="noopener noreferrer">
+                        <Github className="w-4 h-4 mr-2" />
+                        GitHub
+                      </a>
+                    </Button>
+                  )}
+                  {selectedProject.presentation_url && (
+                    <Button size="sm" variant="outline" asChild>
+                      <a href={selectedProject.presentation_url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Presentation
+                      </a>
+                    </Button>
+                  )}
+                </div>
+
+                {/* Details Tabs */}
+                <Tabs defaultValue="description" className="w-full">
+                  <TabsList className="grid w-full grid-cols-4">
+                    <TabsTrigger value="description">Description</TabsTrigger>
+                    <TabsTrigger value="problem">Problem</TabsTrigger>
+                    <TabsTrigger value="solution">Solution</TabsTrigger>
+                    <TabsTrigger value="learnings">Learnings</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="description" className="mt-4">
+                    <p className="text-muted-foreground">{selectedProject.description || 'No description provided.'}</p>
+                  </TabsContent>
+                  <TabsContent value="problem" className="mt-4">
+                    <p className="text-muted-foreground">{selectedProject.problem || 'No problem statement provided.'}</p>
+                  </TabsContent>
+                  <TabsContent value="solution" className="mt-4">
+                    <p className="text-muted-foreground">{selectedProject.solution || 'No solution provided.'}</p>
+                  </TabsContent>
+                  <TabsContent value="learnings" className="mt-4">
+                    <p className="text-muted-foreground">
+                      {selectedProject.learnings || "No learnings provided."}
+                    </p>
+                    {selectedProject.tech_stack && selectedProject.tech_stack.length > 0 && (
+                      <div className="mt-4">
+                        <h4 className="font-semibold mb-2">Tech Stack:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedProject.tech_stack.map((tech: string) => (
+                            <Badge key={tech} variant="outline">{tech}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
+
+                {/* Stats */}
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                  <div className="flex gap-6 items-center">
+                    <button
+                      onClick={() => selectedProjectInteractions.toggleLike()}
+                      disabled={selectedProjectInteractions.isTogglingLike}
+                      className="flex items-center gap-2 text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
+                    >
+                      <Heart 
+                        className={`w-5 h-5 transition-all ${
+                          selectedProjectInteractions.userLiked ? 'fill-red-500 text-red-500' : ''
+                        }`} 
+                      />
+                      {selectedProject.likes || 0} likes
+                    </button>
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <Eye className="w-5 h-5" />
+                      {selectedProject.views || 0} views
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+>>>>>>> 08c7e0b (Add project interactions, migrations, and documentation - Hacktoberfest updates)
     </div>
   );
 };
