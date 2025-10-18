@@ -1,0 +1,147 @@
+{
+  "projects": [
+    {
+      "id": "p-ai-companion",
+      "title": "Roomie AI: Smart Guest Companion",
+      "team": "The Night Owls",
+      "tags": ["AI/ML", "Automation", "Web"],
+      "summary": "An AI concierge that automates in-stay requests and routes tickets intelligently.",
+      "cover": "/placeholder.svg",
+      "likes": 128,
+      "views": 932,
+      "links": {
+        "demoVideo": "https://example.com/demo.mp4",
+        "github": "https://github.com/example/roomie-ai",
+        "deck": "/placeholder.svg"
+      },
+      "details": {
+        "problem": "Guests wait for basic requests; ops lacks context.",
+        "solution": "LLM that classifies & routes tickets with live status to guests.",
+        "architecture": "Next.js + Python API + Redis + OpenAI + MySQL",
+        "learnings": "Prompt compression, cost control, on-call fallbacks."
+      },
+      "media": [
+        "/placeholder.svg",
+        "/placeholder.svg",
+        "/placeholder.svg"
+      ],
+      "createdAt": "2025-10-31T15:00:00Z",
+      "judgesPick": true
+    },
+    {
+      "id": "p-fin-scan",
+      "title": "FinScan: Receipt Auditor",
+      "team": "Byte Me",
+      "tags": ["FinTech", "Data/Analytics"],
+      "summary": "OCR + anomaly detection for expense receipts.",
+      "cover": "/placeholder.svg",
+      "likes": 64,
+      "views": 410,
+      "links": {
+        "demoVideo": "",
+        "github": "https://github.com/example/finscan",
+        "deck": ""
+      },
+      "details": {
+        "problem": "Fraud and manual validation.",
+        "solution": "ML pipeline to flag outliers and duplicates.",
+        "architecture": "Flask + Postgres + LightGBM"
+      },
+      "media": ["/placeholder.svg"],
+      "createdAt": "2025-10-31T14:00:00Z",
+      "judgesPick": false
+    },
+    {
+      "id": "p-green-track",
+      "title": "GreenTrack: Carbon Footprint Monitor",
+      "team": "EcoCoders",
+      "tags": ["Sustainability", "Data/Analytics", "Mobile"],
+      "summary": "Real-time carbon tracking for daily activities with AI recommendations.",
+      "cover": "/placeholder.svg",
+      "likes": 92,
+      "views": 658,
+      "links": {
+        "demoVideo": "https://example.com/greentrack-demo.mp4",
+        "github": "https://github.com/example/greentrack",
+        "deck": "/placeholder.svg"
+      },
+      "details": {
+        "problem": "Lack of awareness about personal carbon footprint.",
+        "solution": "Mobile app with IoT integration and ML-based recommendations.",
+        "architecture": "React Native + Node.js + TensorFlow + MongoDB"
+      },
+      "media": ["/placeholder.svg", "/placeholder.svg"],
+      "createdAt": "2025-10-31T13:30:00Z",
+      "judgesPick": true
+    },
+    {
+      "id": "p-code-mentor",
+      "title": "CodeMentor: AI Pair Programming Assistant",
+      "team": "DevMinds",
+      "tags": ["AI/ML", "DevTools", "Open Source"],
+      "summary": "VS Code extension for context-aware code suggestions and debugging.",
+      "cover": "/placeholder.svg",
+      "likes": 156,
+      "views": 1204,
+      "links": {
+        "demoVideo": "https://example.com/codementor.mp4",
+        "github": "https://github.com/example/codementor",
+        "deck": "/placeholder.svg"
+      },
+      "details": {
+        "problem": "Developers struggle with complex debugging and code reviews.",
+        "solution": "AI-powered extension that learns from codebase patterns.",
+        "architecture": "TypeScript + Python + GPT-4 + Vector DB"
+      },
+      "media": ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"],
+      "createdAt": "2025-10-31T12:45:00Z",
+      "judgesPick": false
+    },
+    {
+      "id": "p-health-pulse",
+      "title": "HealthPulse: Telemedicine Platform",
+      "team": "MedTech Innovators",
+      "tags": ["HealthTech", "Web", "Cloud"],
+      "summary": "Secure video consultation platform with AI symptom checker.",
+      "cover": "/placeholder.svg",
+      "likes": 78,
+      "views": 542,
+      "links": {
+        "demoVideo": "",
+        "github": "https://github.com/example/healthpulse",
+        "deck": "/placeholder.svg"
+      },
+      "details": {
+        "problem": "Limited access to healthcare in remote areas.",
+        "solution": "WebRTC-based platform with HIPAA-compliant data handling.",
+        "architecture": "React + WebRTC + AWS + PostgreSQL"
+      },
+      "media": ["/placeholder.svg"],
+      "createdAt": "2025-10-31T11:20:00Z",
+      "judgesPick": false
+    },
+    {
+      "id": "p-auto-deploy",
+      "title": "AutoDeploy: CI/CD Orchestrator",
+      "team": "Pipeline Wizards",
+      "tags": ["DevTools", "Cloud", "Automation"],
+      "summary": "Intelligent deployment orchestration with rollback automation.",
+      "cover": "/placeholder.svg",
+      "likes": 103,
+      "views": 789,
+      "links": {
+        "demoVideo": "https://example.com/autodeploy.mp4",
+        "github": "https://github.com/example/autodeploy",
+        "deck": ""
+      },
+      "details": {
+        "problem": "Manual deployment processes prone to errors.",
+        "solution": "Automated pipeline with health checks and smart rollbacks.",
+        "architecture": "Go + Kubernetes + Terraform + Prometheus"
+      },
+      "media": ["/placeholder.svg", "/placeholder.svg"],
+      "createdAt": "2025-10-31T10:15:00Z",
+      "judgesPick": true
+    }
+  ]
+}

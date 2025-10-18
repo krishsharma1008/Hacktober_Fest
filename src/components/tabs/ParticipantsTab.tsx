@@ -1,0 +1,142 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Search, Users, Plus, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+
+const filters = ["All", "Engineers", "Designers", "PM/BA", "AI/Data"];
+
+export const ParticipantsTab = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("All");
+
+  const { data: profiles = [], isLoading } = useQuery({
+    queryKey: ['profiles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const filteredParticipants = profiles.filter((p) => {
+    const fullName = p.full_name || '';
+    const email = p.email || '';
+    const teamName = p.team_name || '';
+    
+    const matchesSearch = fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         teamName.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesSearch;
+  });
+
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Participants</h1>
+          <p className="text-lg text-muted-foreground">
+            Connect with fellow innovators and form your dream team
+          </p>
+        </div>
+
+        {/* Search & Filters */}
+        <div className="mb-8 space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <Input
+              placeholder="Search by name, role, or skills..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {filters.map((filter) => (
+              <Button
+                key={filter}
+                variant={activeFilter === filter ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveFilter(filter)}
+              >
+                {filter}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Participant Grid */}
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading participants...</p>
+          </div>
+        ) : filteredParticipants.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No participants found.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {filteredParticipants.map((participant) => (
+              <Card key={participant.id} className="shadow-soft hover:shadow-medium transition-all hover:scale-[1.02]">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="text-4xl">
+                      <User className="w-12 h-12" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{participant.full_name || 'Anonymous'}</h3>
+                      <p className="text-sm text-muted-foreground">{participant.email}</p>
+                    </div>
+                  </div>
+
+                  {participant.team_name ? (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Users className="w-4 h-4" />
+                      <span>Team: {participant.team_name}</span>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No team yet</p>
+                  )}
+                  
+                  {participant.linkedin && (
+                    <a href={participant.linkedin} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline block mt-2">
+                      LinkedIn Profile
+                    </a>
+                  )}
+                  {participant.github && (
+                    <a href={participant.github} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline block mt-1">
+                      GitHub Profile
+                    </a>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Create Team CTA */}
+        <Card className="shadow-medium bg-gradient-primary text-primary-foreground">
+          <CardContent className="p-8 text-center">
+            <h2 className="text-2xl font-bold mb-4">Don't have a team yet?</h2>
+            <p className="mb-6 text-primary-foreground/90">
+              Create your own team and start inviting talented participants!
+            </p>
+            <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+              <Plus className="w-5 h-5 mr-2" />
+              Create Team
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
