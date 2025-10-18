@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
 import SubmitProject from "./pages/SubmitProject";
 import MyProjects from "./pages/MyProjects";
 import JudgeDashboard from "./pages/JudgeDashboard";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/projects" element={<Projects />} />
+            <Route path="/project/:id" element={<ProjectDetail />} />
             
             {/* User Routes */}
             <Route 
