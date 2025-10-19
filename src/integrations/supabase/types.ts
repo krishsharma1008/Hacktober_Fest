@@ -14,352 +14,541 @@ export type Database = {
   }
   public: {
     Tables: {
-      profiles: {
+      discussion_replies: {
         Row: {
-          id: string
-          email: string
-          full_name: string | null
-          team_name: string | null
-          linkedin: string | null
-          github: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id: string
-          email: string
-          full_name?: string | null
-          team_name?: string | null
-          linkedin?: string | null
-          github?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          email?: string
-          full_name?: string | null
-          team_name?: string | null
-          linkedin?: string | null
-          github?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      projects: {
-        Row: {
-          id: string
-          team_name: string
-          title: string
-          description: string | null
-          problem: string | null
-          solution: string | null
-          tech_stack: string[] | null
-          learnings: string | null
-          demo_video_url: string | null
-          ppt_url: string | null
-          github_url: string | null
-          presentation_url: string | null
-          images: string[] | null
-          tags: string[] | null
-          likes: number
-          views: number
-          status: string
-          created_by: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          team_name: string
-          title: string
-          description?: string | null
-          problem?: string | null
-          solution?: string | null
-          tech_stack?: string[] | null
-          learnings?: string | null
-          demo_video_url?: string | null
-          ppt_url?: string | null
-          github_url?: string | null
-          presentation_url?: string | null
-          images?: string[] | null
-          tags?: string[] | null
-          likes?: number
-          views?: number
-          status?: string
-          created_by: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          team_name?: string
-          title?: string
-          description?: string | null
-          problem?: string | null
-          solution?: string | null
-          tech_stack?: string[] | null
-          learnings?: string | null
-          demo_video_url?: string | null
-          ppt_url?: string | null
-          github_url?: string | null
-          presentation_url?: string | null
-          images?: string[] | null
-          tags?: string[] | null
-          likes?: number
-          views?: number
-          status?: string
-          created_by?: string
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      project_likes: {
-        Row: {
-          id: string
-          project_id: string
-          user_id: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          project_id: string
-          user_id: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          project_id?: string
-          user_id?: string
-          created_at?: string
-        }
-      }
-      project_views: {
-        Row: {
-          id: string
-          project_id: string
-          user_id: string | null
-          ip_address: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          project_id: string
-          user_id?: string | null
-          ip_address?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          project_id?: string
-          user_id?: string | null
-          ip_address?: string | null
-          created_at?: string
-        }
-      }
-      user_roles: {
-        Row: {
-          id: string
-          user_id: string
-          role: 'user' | 'admin' | 'judge'
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          role?: 'user' | 'admin' | 'judge'
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          role?: 'user' | 'admin' | 'judge'
-          created_at?: string
-        }
-      }
-      judge_feedback: {
-        Row: {
-          id: string
-          project_id: string
-          judge_id: string
-          score: number | null
-          comment: string | null
-          note: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          project_id: string
-          judge_id: string
-          score?: number | null
-          comment?: string | null
-          note?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          project_id?: string
-          judge_id?: string
-          score?: number | null
-          comment?: string | null
-          note?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      updates: {
-        Row: {
-          id: string
-          title: string
           content: string
+          created_at: string | null
           created_by: string
-          created_at: string
+          discussion_id: string
+          id: string
+          updated_at: string | null
         }
         Insert: {
-          id?: string
-          title: string
           content: string
+          created_at?: string | null
           created_by: string
-          created_at?: string
+          discussion_id: string
+          id?: string
+          updated_at?: string | null
         }
         Update: {
-          id?: string
-          title?: string
           content?: string
+          created_at?: string | null
           created_by?: string
-          created_at?: string
+          discussion_id?: string
+          id?: string
+          updated_at?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "discussion_replies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discussion_replies_discussion_id_fkey"
+            columns: ["discussion_id"]
+            isOneToOne: false
+            referencedRelation: "discussions"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       discussions: {
         Row: {
-          id: string
-          title: string
           content: string
+          created_at: string | null
           created_by: string
-          created_at: string
+          id: string
+          reply_count: number | null
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by: string
+          id?: string
+          reply_count?: number | null
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          reply_count?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      judge_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          id: string
+          judge_id: string
+          note: string | null
+          project_id: string
+          score: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          judge_id: string
+          note?: string | null
+          project_id: string
+          score?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          judge_id?: string
+          note?: string | null
+          project_id?: string
+          score?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "judge_feedback_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string | null
+          github: string | null
+          id: string
+          linkedin: string | null
+          team_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          github?: string | null
+          id: string
+          linkedin?: string | null
+          team_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          github?: string | null
+          id?: string
+          linkedin?: string | null
+          team_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      project_likes: {
+        Row: {
+          created_at: string | null
+          id: string
+          project_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          project_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          project_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_likes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_views: {
+        Row: {
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          project_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          project_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          project_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_views_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          cover_image: string | null
+          demo_video_url: string | null
+          description: string | null
+          github_url: string | null
+          id: string
+          images: string[] | null
+          learnings: string | null
+          likes: number | null
+          ppt_url: string | null
+          presentation_url: string | null
+          problem: string | null
+          solution: string | null
+          status: string | null
+          tags: string[] | null
+          team_id: string | null
+          team_name: string
+          tech_stack: string[] | null
+          title: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          cover_image?: string | null
+          demo_video_url?: string | null
+          description?: string | null
+          github_url?: string | null
+          id?: string
+          images?: string[] | null
+          learnings?: string | null
+          likes?: number | null
+          ppt_url?: string | null
+          presentation_url?: string | null
+          problem?: string | null
+          solution?: string | null
+          status?: string | null
+          tags?: string[] | null
+          team_id?: string | null
+          team_name: string
+          tech_stack?: string[] | null
+          title: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          cover_image?: string | null
+          demo_video_url?: string | null
+          description?: string | null
+          github_url?: string | null
+          id?: string
+          images?: string[] | null
+          learnings?: string | null
+          likes?: number | null
+          ppt_url?: string | null
+          presentation_url?: string | null
+          problem?: string | null
+          solution?: string | null
+          status?: string | null
+          tags?: string[] | null
+          team_id?: string | null
+          team_name?: string
+          tech_stack?: string[] | null
+          title?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_members: {
+        Row: {
+          id: string
+          team_id: string
+          user_id: string
+          role: string
+          joined_at: string | null
         }
         Insert: {
           id?: string
-          title: string
-          content: string
-          created_by: string
-          created_at?: string
+          team_id: string
+          user_id: string
+          role?: string
+          joined_at?: string | null
         }
         Update: {
           id?: string
-          title?: string
-          content?: string
-          created_by?: string
-          created_at?: string
+          team_id?: string
+          user_id?: string
+          role?: string
+          joined_at?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          created_by: string
+          created_at: string | null
+          updated_at: string | null
+          max_members: number | null
+          is_active: boolean | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          created_by: string
+          created_at?: string | null
+          updated_at?: string | null
+          max_members?: number | null
+          is_active?: boolean | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          created_by?: string
+          created_at?: string | null
+          updated_at?: string | null
+          max_members?: number | null
+          is_active?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       registrations: {
         Row: {
+          created_at: string | null
           id: string
-          team_name: string
           leader_id: string
-          member1_name: string | null
-          member1_email: string | null
-          member1_phone: string | null
           member1_designation: string | null
-          member2_name: string | null
-          member2_email: string | null
-          member2_phone: string | null
+          member1_email: string | null
+          member1_name: string | null
+          member1_phone: string | null
           member2_designation: string | null
-          member3_name: string | null
-          member3_email: string | null
-          member3_phone: string | null
+          member2_email: string | null
+          member2_name: string | null
+          member2_phone: string | null
           member3_designation: string | null
-          member4_name: string | null
-          member4_email: string | null
-          member4_phone: string | null
+          member3_email: string | null
+          member3_name: string | null
+          member3_phone: string | null
           member4_designation: string | null
-          created_at: string
+          member4_email: string | null
+          member4_name: string | null
+          member4_phone: string | null
+          team_name: string
         }
         Insert: {
+          created_at?: string | null
           id?: string
-          team_name: string
           leader_id: string
-          member1_name?: string | null
-          member1_email?: string | null
-          member1_phone?: string | null
           member1_designation?: string | null
-          member2_name?: string | null
-          member2_email?: string | null
-          member2_phone?: string | null
+          member1_email?: string | null
+          member1_name?: string | null
+          member1_phone?: string | null
           member2_designation?: string | null
-          member3_name?: string | null
-          member3_email?: string | null
-          member3_phone?: string | null
+          member2_email?: string | null
+          member2_name?: string | null
+          member2_phone?: string | null
           member3_designation?: string | null
-          member4_name?: string | null
-          member4_email?: string | null
-          member4_phone?: string | null
+          member3_email?: string | null
+          member3_name?: string | null
+          member3_phone?: string | null
           member4_designation?: string | null
-          created_at?: string
+          member4_email?: string | null
+          member4_name?: string | null
+          member4_phone?: string | null
+          team_name: string
         }
         Update: {
+          created_at?: string | null
           id?: string
-          team_name?: string
           leader_id?: string
-          member1_name?: string | null
-          member1_email?: string | null
-          member1_phone?: string | null
           member1_designation?: string | null
-          member2_name?: string | null
-          member2_email?: string | null
-          member2_phone?: string | null
+          member1_email?: string | null
+          member1_name?: string | null
+          member1_phone?: string | null
           member2_designation?: string | null
-          member3_name?: string | null
-          member3_email?: string | null
-          member3_phone?: string | null
+          member2_email?: string | null
+          member2_name?: string | null
+          member2_phone?: string | null
           member3_designation?: string | null
-          member4_name?: string | null
-          member4_email?: string | null
-          member4_phone?: string | null
+          member3_email?: string | null
+          member3_name?: string | null
+          member3_phone?: string | null
           member4_designation?: string | null
-          created_at?: string
+          member4_email?: string | null
+          member4_name?: string | null
+          member4_phone?: string | null
+          team_name?: string
         }
+        Relationships: []
+      }
+      updates: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string
+          id: string
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by: string
+          id?: string
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      toggle_project_like: {
+      get_team_member_count: {
+        Args: { _team_id: string }
+        Returns: number
+      }
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
         Args: {
-          p_project_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
+        Returns: boolean
+      }
+      is_team_admin: {
+        Args: { _team_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_team_member: {
+        Args: { _team_id: string; _user_id: string }
+        Returns: boolean
+      }
+      record_project_view: {
+        Args: { p_ip_address?: string; p_project_id: string }
+        Returns: number
+      }
+      team_has_project: {
+        Args: { _team_id: string }
+        Returns: boolean
+      }
+      toggle_project_like: {
+        Args: { p_project_id: string }
         Returns: {
           liked: boolean
           total_likes: number
         }[]
       }
-      record_project_view: {
-        Args: {
-          p_project_id: string
-          p_ip_address?: string
-        }
-        Returns: number
-      }
-      has_role: {
-        Args: {
-          _user_id: string
-          _role: 'user' | 'admin' | 'judge'
-        }
-        Returns: boolean
-      }
-      get_user_role: {
-        Args: {
-          _user_id: string
-        }
-        Returns: 'user' | 'admin' | 'judge'
-      }
     }
     Enums: {
-      app_role: 'user' | 'admin' | 'judge'
+      app_role: "user" | "admin" | "judge"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -486,6 +675,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "admin", "judge"],
+    },
   },
 } as const

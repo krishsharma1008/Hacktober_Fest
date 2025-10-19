@@ -74,7 +74,7 @@ export const ProjectGalleryTab = () => {
     if (selectedProject?.id) {
       selectedProjectInteractions.recordView();
     }
-  }, [selectedProject?.id]);
+  }, [selectedProject?.id, selectedProjectInteractions]);
 
   const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ['projects'],
@@ -224,12 +224,17 @@ export const ProjectGalleryTab = () => {
                 onClick={() => navigate(`/project/${project.id}`)}
               >
                 <div className="relative aspect-video overflow-hidden bg-muted">
-                  {images.length > 0 ? (
+                  {project.cover_image || images.length > 0 ? (
                     <img
-                      src={images[0]}
+                      src={project.cover_image || images[0]}
                       alt={project.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                       loading="lazy"
+                      onError={(e) => {
+                        if (project.cover_image && images.length > 0) {
+                          e.currentTarget.src = images[0];
+                        }
+                      }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-muted">
@@ -278,12 +283,17 @@ export const ProjectGalleryTab = () => {
 
               <div className="space-y-6">
                 {/* Media Gallery */}
-                {selectedProject.images && selectedProject.images.length > 0 && (
+                {(selectedProject.cover_image || (selectedProject.images && selectedProject.images.length > 0)) && (
                   <div className="aspect-video bg-muted rounded-lg overflow-hidden">
                     <img
-                      src={selectedProject.images[0]}
+                      src={selectedProject.cover_image || selectedProject.images[0]}
                       alt={selectedProject.title}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        if (selectedProject.cover_image && selectedProject.images && selectedProject.images.length > 0) {
+                          e.currentTarget.src = selectedProject.images[0];
+                        }
+                      }}
                     />
                   </div>
                 )}
@@ -313,7 +323,7 @@ export const ProjectGalleryTab = () => {
                     <Button size="sm" variant="outline" asChild>
                       <a href={selectedProject.github_url} target="_blank" rel="noopener noreferrer">
                         <Github className="w-4 h-4 mr-2" />
-                        GitHub
+                        Repository
                       </a>
                     </Button>
                   )}

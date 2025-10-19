@@ -38,13 +38,18 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border shadow-soft">
+    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b-4 border-primary shadow-medium">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
+          <a 
+            href="https://zapcom.ai/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+          >
             <img src={zapcomLogo} alt="Zapcom" className="h-10 w-auto" />
-          </div>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">

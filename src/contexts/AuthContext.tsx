@@ -10,8 +10,8 @@ interface AuthContextType {
   session: Session | null;
   role: UserRole | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -104,8 +104,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       return { error: null };
-    } catch (error: any) {
-      return { error };
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('An unexpected error occurred');
+      return { error: err };
     }
   };
 
@@ -126,8 +127,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       return { error: null };
-    } catch (error: any) {
-      return { error };
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('An unexpected error occurred');
+      return { error: err };
     }
   };
 

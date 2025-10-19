@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,13 +11,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Heart, Eye, Github, Play, ExternalLink, Edit, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTeam } from '@/contexts/TeamContext';
 
 const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { userTeams } = useTeam();
   const queryClient = useQueryClient();
   const [hasLiked, setHasLiked] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
 
   const { data: project, isLoading } = useQuery({
     queryKey: ['project', id],
@@ -34,12 +37,29 @@ const ProjectDetail = () => {
     enabled: !!id
   });
 
-  // Increment view count on mount
+  // Check if user can edit this project
   useEffect(() => {
-    if (id) {
-      incrementViews();
+    if (!user || !project) {
+      setCanEdit(false);
+      return;
     }
-  }, [id]);
+
+    // User created the project
+    if (project.created_by === user.id) {
+      setCanEdit(true);
+      return;
+    }
+
+    // Check if user is a team member
+    if (project.team_id) {
+      const isTeamMember = userTeams.some(
+        ut => ut.teams?.id === project.team_id
+      );
+      setCanEdit(isTeamMember);
+    } else {
+      setCanEdit(false);
+    }
+  }, [user, project, userTeams]);
 
   // Check if user has liked this project
   useEffect(() => {
@@ -49,12 +69,12 @@ const ProjectDetail = () => {
     }
   }, [user, id]);
 
-  const incrementViews = async () => {
+  const incrementViews = useCallback(async () => {
     if (!id) return;
     
     try {
-      const { error } = await supabase.rpc('increment_project_views', {
-        project_id: id
+      const { error } = await supabase.rpc('record_project_view', {
+        p_project_id: id
       });
       
       if (error) {
@@ -75,7 +95,14 @@ const ProjectDetail = () => {
     } catch (error) {
       console.error('Error incrementing views:', error);
     }
-  };
+  }, [id]);
+
+  // Increment view count on mount
+  useEffect(() => {
+    if (id) {
+      incrementViews();
+    }
+  }, [id, incrementViews]);
 
   const likeMutation = useMutation({
     mutationFn: async () => {
@@ -139,8 +166,6 @@ const ProjectDetail = () => {
     );
   }
 
-  const isOwner = user?.id === project.created_by;
-
   return (
     <div className="min-h-screen flex flex-col">
       <NavigationHeader />
@@ -155,8 +180,8 @@ const ProjectDetail = () => {
               <h1 className="text-4xl font-bold mb-2">{project.title}</h1>
               <p className="text-xl text-muted-foreground">by {project.team_name}</p>
             </div>
-            {isOwner && (
-              <Button onClick={() => navigate('/my-projects')} variant="outline">
+            {canEdit && (
+              <Button onClick={() => navigate(`/edit-project/${project.id}`)} variant="outline">
                 <Edit className="w-4 h-4 mr-2" />
                 Edit Project
               </Button>
@@ -216,7 +241,7 @@ const ProjectDetail = () => {
             <Button variant="outline" asChild>
               <a href={project.github_url} target="_blank" rel="noopener noreferrer">
                 <Github className="w-4 h-4 mr-2" />
-                GitHub
+                Repository
               </a>
             </Button>
           )}

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,26 +10,27 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 215 20% 15%;
+    /* Retro Arcade Theme - Blue Gradient Background */
+    --background: 235 70% 25%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 20% 15%;
+    --card: 235 60% 35%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 20% 15%;
+    --popover: 235 60% 30%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Zapcom Blue */
-    --primary: 215 100% 34%;
+    /* Retro Blue */
+    --primary: 225 100% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 215 100% 45%;
+    --primary-glow: 225 100% 70%;
 
-    /* Zapminds Orange */
+    /* Retro Orange (for accents/prizes) */
     --secondary: 24 100% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 20% 95%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 235 40% 50%;
+    --muted-foreground: 220 20% 85%;
 
     --accent: 24 100% 50%;
     --accent-foreground: 0 0% 100%;
@@ -35,25 +38,25 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 15% 88%;
-    --input: 215 15% 88%;
-    --ring: 215 100% 34%;
+    --border: 235 30% 45%;
+    --input: 235 40% 40%;
+    --ring: 225 100% 60%;
 
-    --radius: 0.75rem;
+    --radius: 0.25rem;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(215 100% 34%), hsl(195 100% 45%));
+    /* Retro Arcade Gradients */
+    --gradient-primary: linear-gradient(180deg, hsl(235 70% 20%), hsl(270 60% 35%));
     --gradient-accent: linear-gradient(135deg, hsl(24 100% 50%), hsl(10 100% 55%));
-    --gradient-hero: linear-gradient(135deg, hsl(215 100% 34% / 0.7), hsl(195 100% 45% / 0.7));
+    --gradient-hero: linear-gradient(180deg, hsl(235 70% 25%), hsl(260 65% 40%));
     
-    /* Shadows */
-    --shadow-soft: 0 2px 8px hsl(215 15% 15% / 0.08);
-    --shadow-medium: 0 4px 16px hsl(215 15% 15% / 0.12);
-    --shadow-strong: 0 8px 24px hsl(215 15% 15% / 0.16);
-    --shadow-glow: 0 0 40px hsl(215 100% 45% / 0.3);
+    /* Retro Shadows */
+    --shadow-soft: 0 4px 0 hsl(235 70% 15%);
+    --shadow-medium: 0 6px 0 hsl(235 70% 15%);
+    --shadow-strong: 0 8px 0 hsl(235 70% 15%);
+    --shadow-glow: 0 0 20px hsl(225 100% 60% / 0.3);
 
     /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
@@ -63,6 +66,41 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gradient-primary text-foreground;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+  }
+
+  /* Retro Button Styles */
+  .retro-button {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  /* Pixelated Images */
+  .pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+}
+
+@layer utilities {
+  .text-retro {
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.6;
+  }
+  
+  .text-shadow-retro {
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
   }
 }
