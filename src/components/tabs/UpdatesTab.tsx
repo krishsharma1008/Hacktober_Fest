@@ -231,7 +231,12 @@ export const UpdatesTab = () => {
           <CardContent className="p-8 text-center">
             <p className="text-muted-foreground">
               Want to receive updates via email?{" "}
-              <a href="mailto:zapminds@zapcg.com" className="text-primary hover:underline font-medium">
+              <a 
+                href="/ZapHub-Newsletter.pdf" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-medium"
+              >
                 Subscribe to our newsletter
               </a>
             </p>
