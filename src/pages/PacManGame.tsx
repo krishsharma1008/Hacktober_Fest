@@ -89,20 +89,6 @@ const PacManGame = () => {
               </li>
             </ul>
           </div>
-
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>
-              Game created by{" "}
-              <a
-                href="https://github.com/kubowania/pac-man"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                Ania Kubow
-              </a>
-            </p>
-          </div>
         </div>
       </main>
 
