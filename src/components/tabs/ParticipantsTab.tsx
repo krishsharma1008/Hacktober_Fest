@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { CreateTeamModal } from "@/components/CreateTeamModal";
 
 const filters = ["All", "Engineers", "Designers", "PM/BA", "AI/Data"];
 
 export const ParticipantsTab = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
 
   const { data: profiles = [], isLoading } = useQuery({
     queryKey: ['profiles'],
@@ -130,13 +132,27 @@ export const ParticipantsTab = () => {
             <p className="mb-6 text-primary-foreground/90">
               Create your own team and start inviting talented participants!
             </p>
-            <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
+            <Button 
+              size="lg" 
+              className="bg-accent hover:bg-accent/90 text-accent-foreground"
+              onClick={() => setShowCreateTeamModal(true)}
+            >
               <Plus className="w-5 h-5 mr-2" />
               Create Team
             </Button>
           </CardContent>
         </Card>
       </div>
+
+      {/* Create Team Modal */}
+      <CreateTeamModal
+        open={showCreateTeamModal}
+        onOpenChange={setShowCreateTeamModal}
+        onSuccess={() => {
+          // Refresh the profiles data to show updated team information
+          window.location.reload();
+        }}
+      />
     </div>
   );
 };
