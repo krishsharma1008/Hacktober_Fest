@@ -27,3 +27,9 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+.env.backup
+
+# Documentation files that may contain sensitive info
+*MIGRATION_SUCCESS_REPORT*.md
+*SUPABASE_ISSUE*.md
+*SUPABASE_STATUS*.md

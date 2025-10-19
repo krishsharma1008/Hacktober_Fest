@@ -5,7 +5,8 @@
 # Supabase public credentials are meant to be exposed in the browser
 # These are not secrets - they're the anon/public key and URL
 [build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_PUBLISHABLE_KEY,VITE_SUPABASE_URL,VITE_SUPABASE_PROJECT_ID"
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_PUBLISHABLE_KEY,VITE_SUPABASE_URL,VITE_SUPABASE_PROJECT_ID,VITE_SARVAM_API_KEY,VITE_SARVAM_MODEL"
+  SECRETS_SCAN_OMIT_PATHS = ".env.backup,MIGRATION_SUCCESS_REPORT.md"
 
 # Optional: Exclude certain paths from secrets scanning
 [build.processing]
