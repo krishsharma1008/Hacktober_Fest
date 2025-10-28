@@ -1,27 +1,40 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useTeam } from '@/contexts/TeamContext';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, Upload, Users, AlertCircle, ImagePlus, X } from 'lucide-react';
-import { NavigationHeader } from '@/components/NavigationHeader';
-import { Footer } from '@/components/Footer';
-import { CreateTeamModal } from '@/components/CreateTeamModal';
-import { TeamManagement } from '@/components/TeamManagement';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTeam } from "@/contexts/TeamContext";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Loader2,
+  Upload,
+  Users,
+  AlertCircle,
+  ImagePlus,
+  X,
+} from "lucide-react";
+import { NavigationHeader } from "@/components/NavigationHeader";
+import { Footer } from "@/components/Footer";
+import { CreateTeamModal } from "@/components/CreateTeamModal";
+import { TeamManagement } from "@/components/TeamManagement";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const SubmitProject = () => {
   const { user } = useAuth();
@@ -30,23 +43,25 @@ const SubmitProject = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
-  const [selectedTeamId, setSelectedTeamId] = useState<string>('individual');
+  const [selectedTeamId, setSelectedTeamId] = useState<string>("individual");
   const [teamHasProject, setTeamHasProject] = useState(false);
   const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(
+    null
+  );
   const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
-    teamName: '',
-    title: '',
-    description: '',
-    problem: '',
-    solution: '',
-    techStack: '',
-    learnings: '',
-    demoVideoUrl: '',
-    githubUrl: '',
-    presentationUrl: '',
-    tags: ''
+    teamName: "",
+    title: "",
+    description: "",
+    problem: "",
+    solution: "",
+    techStack: "",
+    learnings: "",
+    demoVideoUrl: "",
+    githubUrl: "",
+    presentationUrl: "",
+    tags: "",
   });
 
   useEffect(() => {
@@ -56,22 +71,22 @@ const SubmitProject = () => {
   // Check if selected team already has a project
   useEffect(() => {
     const checkTeamProject = async () => {
-      if (!selectedTeamId || selectedTeamId === 'individual') {
+      if (!selectedTeamId || selectedTeamId === "individual") {
         setTeamHasProject(false);
         return;
       }
 
       try {
         const { data, error } = await supabase
-          .from('projects')
-          .select('id')
-          .eq('team_id', selectedTeamId)
+          .from("projects")
+          .select("id")
+          .eq("team_id", selectedTeamId)
           .maybeSingle();
 
         if (error) throw error;
         setTeamHasProject(!!data);
       } catch (error) {
-        console.error('Error checking team project:', error);
+        console.error("Error checking team project:", error);
       }
     };
 
@@ -80,14 +95,14 @@ const SubmitProject = () => {
 
   // Auto-fill team name when team is selected
   useEffect(() => {
-    if (selectedTeamId && selectedTeamId !== 'individual') {
-      const team = userTeams.find(ut => ut.teams?.id === selectedTeamId);
+    if (selectedTeamId && selectedTeamId !== "individual") {
+      const team = userTeams.find((ut) => ut.teams?.id === selectedTeamId);
       if (team?.teams?.name) {
-        setFormData(prev => ({ ...prev, teamName: team.teams!.name }));
+        setFormData((prev) => ({ ...prev, teamName: team.teams!.name }));
       }
     } else {
       // Clear team name if switching to individual
-      setFormData(prev => ({ ...prev, teamName: '' }));
+      setFormData((prev) => ({ ...prev, teamName: "" }));
     }
   }, [selectedTeamId, userTeams]);
 
@@ -97,8 +112,8 @@ const SubmitProject = () => {
 
     try {
       // Validate team selection for team projects
-      if (selectedTeamId && selectedTeamId !== 'individual' && teamHasProject) {
-        throw new Error('This team already has a project submission');
+      if (selectedTeamId && selectedTeamId !== "individual" && teamHasProject) {
+        throw new Error("This team already has a project submission");
       }
 
       let coverImageUrl: string | null = null;
@@ -106,86 +121,96 @@ const SubmitProject = () => {
       // Upload cover image if provided
       if (coverImage) {
         setUploadingImage(true);
-        const fileExt = coverImage.name.split('.').pop();
+        const fileExt = coverImage.name.split(".").pop();
         const fileName = `${user?.id}-${Date.now()}.${fileExt}`;
         const filePath = `project-covers/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('project-images')
+          .from("project-images")
           .upload(filePath, coverImage, {
-            cacheControl: '3600',
-            upsert: false
+            cacheControl: "3600",
+            upsert: false,
           });
 
         if (uploadError) {
-          console.error('Upload error:', uploadError);
-          throw new Error('Failed to upload cover image: ' + uploadError.message);
+          console.error("Upload error:", uploadError);
+          throw new Error(
+            "Failed to upload cover image: " + uploadError.message
+          );
         }
 
         // Get public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from('project-images')
-          .getPublicUrl(filePath);
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("project-images").getPublicUrl(filePath);
 
         coverImageUrl = publicUrl;
         setUploadingImage(false);
       }
 
-      const { error } = await supabase
-        .from('projects')
-        .insert({
-          team_id: selectedTeamId === 'individual' ? null : selectedTeamId,
-          team_name: formData.teamName,
-          title: formData.title,
-          description: formData.description,
-          problem: formData.problem,
-          solution: formData.solution,
-          tech_stack: formData.techStack.split(',').map(s => s.trim()).filter(Boolean),
-          learnings: formData.learnings,
-          demo_video_url: formData.demoVideoUrl,
-          github_url: formData.githubUrl,
-          presentation_url: formData.presentationUrl,
-          tags: formData.tags.split(',').map(s => s.trim()).filter(Boolean),
-          cover_image: coverImageUrl,
-          created_by: user?.id,
-          status: 'submitted'
-        });
+      const { error } = await supabase.from("projects").insert({
+        team_id: selectedTeamId === "individual" ? null : selectedTeamId,
+        team_name: formData.teamName,
+        title: formData.title,
+        description: formData.description,
+        problem: formData.problem,
+        solution: formData.solution,
+        tech_stack: formData.techStack
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        learnings: formData.learnings,
+        demo_video_url: formData.demoVideoUrl,
+        github_url: formData.githubUrl,
+        presentation_url: formData.presentationUrl,
+        tags: formData.tags
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        cover_image: coverImageUrl,
+        created_by: user?.id,
+        status: "submitted",
+      });
 
       if (error) throw error;
 
       toast({
-        title: 'Project submitted! 🎉',
-        description: selectedTeamId && selectedTeamId !== 'individual'
-          ? 'Your team project has been successfully submitted.'
-          : 'Your project has been successfully submitted.'
+        title: "Project submitted! 🎉",
+        description:
+          selectedTeamId && selectedTeamId !== "individual"
+            ? "Your team project has been successfully submitted."
+            : "Your project has been successfully submitted.",
       });
 
-      navigate('/my-projects');
+      navigate("/my-projects");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
       toast({
-        title: 'Submission failed',
+        title: "Submission failed",
         description: errorMessage,
-        variant: 'destructive'
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         toast({
-          title: 'Invalid file type',
-          description: 'Please upload an image file (JPG, PNG, GIF, etc.)',
-          variant: 'destructive'
+          title: "Invalid file type",
+          description: "Please upload an image file (JPG, PNG, GIF, etc.)",
+          variant: "destructive",
         });
         return;
       }
@@ -193,15 +218,15 @@ const SubmitProject = () => {
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title: 'File too large',
-          description: 'Cover image must be less than 5MB',
-          variant: 'destructive'
+          title: "File too large",
+          description: "Cover image must be less than 5MB",
+          variant: "destructive",
         });
         return;
       }
 
       setCoverImage(file);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -216,7 +241,7 @@ const SubmitProject = () => {
     setCoverImagePreview(null);
   };
 
-  const availableTeams = userTeams.filter(ut => ut.teams?.is_active);
+  const availableTeams = userTeams.filter((ut) => ut.teams?.is_active);
   const hasTeams = availableTeams.length > 0;
 
   return (
@@ -245,15 +270,20 @@ const SubmitProject = () => {
                     <div className="space-y-2">
                       <Label htmlFor="team">Select Team (Optional)</Label>
                       <div className="flex gap-2">
-                        <Select value={selectedTeamId} onValueChange={setSelectedTeamId}>
+                        <Select
+                          value={selectedTeamId}
+                          onValueChange={setSelectedTeamId}
+                        >
                           <SelectTrigger id="team" className="flex-1">
                             <SelectValue placeholder="Submit as individual or select a team" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="individual">Submit as Individual</SelectItem>
+                            <SelectItem value="individual">
+                              Submit as Individual
+                            </SelectItem>
                             {availableTeams.map((userTeam) => (
-                              <SelectItem 
-                                key={userTeam.teams!.id} 
+                              <SelectItem
+                                key={userTeam.teams!.id}
                                 value={userTeam.teams!.id}
                               >
                                 {userTeam.teams!.name} ({userTeam.role})
@@ -270,22 +300,28 @@ const SubmitProject = () => {
                           New Team
                         </Button>
                       </div>
-                      {selectedTeamId && selectedTeamId !== 'individual' && teamHasProject && (
-                        <Alert variant="destructive">
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertDescription>
-                            This team already has a project submission. Each team can only submit one project.
-                          </AlertDescription>
-                        </Alert>
-                      )}
-                      {selectedTeamId && selectedTeamId !== 'individual' && !teamHasProject && (
-                        <Alert>
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertDescription>
-                            All team members will be able to edit this project.
-                          </AlertDescription>
-                        </Alert>
-                      )}
+                      {selectedTeamId &&
+                        selectedTeamId !== "individual" &&
+                        teamHasProject && (
+                          <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertDescription>
+                              This team already has a project submission. Each
+                              team can only submit one project.
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                      {selectedTeamId &&
+                        selectedTeamId !== "individual" &&
+                        !teamHasProject && (
+                          <Alert>
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertDescription>
+                              All team members will be able to edit this
+                              project.
+                            </AlertDescription>
+                          </Alert>
+                        )}
                     </div>
                   ) : (
                     <div className="text-center py-4 space-y-3">
@@ -309,7 +345,7 @@ const SubmitProject = () => {
               </Card>
 
               {/* Team Member Management - Show when team is selected */}
-              {selectedTeamId && selectedTeamId !== 'individual' && (
+              {selectedTeamId && selectedTeamId !== "individual" && (
                 <Card className="border-2 border-primary/20">
                   <CardHeader>
                     <CardTitle className="text-lg">Team Members</CardTitle>
@@ -331,7 +367,8 @@ const SubmitProject = () => {
                     Project Cover Image
                   </CardTitle>
                   <CardDescription>
-                    Upload a cover image for your project (optional, max 5MB)
+                    Upload a cover image for your project (max 5MB){" "}
+                    <span className="text-destructive">*</span>
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -350,6 +387,7 @@ const SubmitProject = () => {
                             id="cover-image"
                             type="file"
                             accept="image/*"
+                            required
                             onChange={handleCoverImageChange}
                             className="hidden"
                           />
@@ -381,7 +419,8 @@ const SubmitProject = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="teamName">
-                    Team/Individual Name <span className="text-destructive">*</span>
+                    Team/Individual Name{" "}
+                    <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="teamName"
@@ -390,7 +429,7 @@ const SubmitProject = () => {
                     onChange={handleChange}
                     required
                     placeholder="Innovation Squad"
-                    disabled={selectedTeamId !== 'individual'}
+                    disabled={selectedTeamId !== "individual"}
                   />
                 </div>
 
@@ -426,10 +465,14 @@ const SubmitProject = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="problem">Problem Statement</Label>
+                  <Label htmlFor="problem">
+                    Problem Statement{" "}
+                    <span className="text-destructive">*</span>
+                  </Label>
                   <Textarea
                     id="problem"
                     name="problem"
+                    required
                     value={formData.problem}
                     onChange={handleChange}
                     placeholder="What problem does this solve?"
@@ -526,17 +569,22 @@ const SubmitProject = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate("/")}
                   className="flex-1"
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
-                  disabled={isLoading || (selectedTeamId !== 'individual' && teamHasProject)} 
+                <Button
+                  type="submit"
+                  disabled={
+                    isLoading ||
+                    (selectedTeamId !== "individual" && teamHasProject)
+                  }
                   className="flex-1"
                 >
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
                   <Upload className="mr-2 h-4 w-4" />
                   Submit Project
                 </Button>

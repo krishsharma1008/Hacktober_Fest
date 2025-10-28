@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * TeamManagement Component
  * Displays and manages team members with role management

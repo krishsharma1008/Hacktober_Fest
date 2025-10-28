@@ -3,7 +3,13 @@ import { Menu, X, User, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import zapcomLogo from "@/assets/zapcom-logo.png";
 
@@ -34,7 +40,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -42,9 +48,9 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a 
-            href="https://zapcom.ai/" 
-            target="_blank" 
+          <a
+            href="https://zapcom.ai/"
+            target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           >
@@ -77,36 +83,53 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="ml-2">
                         <Avatar className="h-8 w-8">
-                          <AvatarFallback>{getInitials(user.email || 'U')}</AvatarFallback>
+                          <AvatarFallback>
+                            {getInitials(user.email || "U")}
+                          </AvatarFallback>
                         </Avatar>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => navigate('/submit-project')}>
-                        Submit Project
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate('/my-projects')}>
-                        My Projects
-                      </DropdownMenuItem>
-                      {role === 'judge' || role === 'admin' ? (
-                        <DropdownMenuItem onClick={() => navigate('/judge-dashboard')}>
+                      {role !== "judge" ? (
+                        <DropdownMenuItem
+                          onClick={() => navigate("/submit-project")}
+                        >
+                          Submit Project
+                        </DropdownMenuItem>
+                      ) : null}
+                      {role !== "judge" ? (
+                        <DropdownMenuItem
+                          onClick={() => navigate("/my-projects")}
+                        >
+                          My Projects
+                        </DropdownMenuItem>
+                      ) : null}
+                      {role === "judge" || role === "admin" ? (
+                        <DropdownMenuItem
+                          onClick={() => navigate("/judge-dashboard")}
+                        >
                           Judge Dashboard
                         </DropdownMenuItem>
                       ) : null}
-                      {role === 'admin' && (
-                        <DropdownMenuItem onClick={() => navigate('/admin-dashboard')}>
+                      {role === "admin" && (
+                        <DropdownMenuItem
+                          onClick={() => navigate("/admin-dashboard")}
+                        >
                           Admin Dashboard
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                      <DropdownMenuItem
+                        onClick={handleSignOut}
+                        className="text-destructive"
+                      >
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  <Button onClick={() => navigate('/auth')} className="ml-2">
+                  <Button onClick={() => navigate("/auth")} className="ml-2">
                     Sign In / Register
                   </Button>
                 )}
@@ -142,7 +165,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                   {tab.label}
                 </Button>
               ))}
-              
+
               {!loading && (
                 <>
                   {user ? (
@@ -151,7 +174,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                         variant="ghost"
                         className="justify-start"
                         onClick={() => {
-                          navigate('/submit-project');
+                          navigate("/submit-project");
                           setMobileMenuOpen(false);
                         }}
                       >
@@ -161,30 +184,30 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                         variant="ghost"
                         className="justify-start"
                         onClick={() => {
-                          navigate('/my-projects');
+                          navigate("/my-projects");
                           setMobileMenuOpen(false);
                         }}
                       >
                         My Projects
                       </Button>
-                      {(role === 'judge' || role === 'admin') && (
+                      {(role === "judge" || role === "admin") && (
                         <Button
                           variant="ghost"
                           className="justify-start"
                           onClick={() => {
-                            navigate('/judge-dashboard');
+                            navigate("/judge-dashboard");
                             setMobileMenuOpen(false);
                           }}
                         >
                           Judge Dashboard
                         </Button>
                       )}
-                      {role === 'admin' && (
+                      {role === "admin" && (
                         <Button
                           variant="ghost"
                           className="justify-start"
                           onClick={() => {
-                            navigate('/admin-dashboard');
+                            navigate("/admin-dashboard");
                             setMobileMenuOpen(false);
                           }}
                         >
@@ -206,7 +229,7 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                   ) : (
                     <Button
                       onClick={() => {
-                        navigate('/auth');
+                        navigate("/auth");
                         setMobileMenuOpen(false);
                       }}
                       className="justify-start"

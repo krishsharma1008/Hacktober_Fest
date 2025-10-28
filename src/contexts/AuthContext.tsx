@@ -1,16 +1,26 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { User, Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-type UserRole = 'user' | 'admin' | 'judge';
+type UserRole = "user" | "admin" | "judge";
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: UserRole | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string
+  ) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -26,48 +36,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserRole = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .rpc('get_user_role', { _user_id: userId });
-      
+      const { data, error } = await supabase.rpc("get_user_role", {
+        _user_id: userId,
+      });
+
       if (error) throw error;
       setRole(data as UserRole);
     } catch (error) {
-      console.error('Error fetching user role:', error);
-      setRole('user'); // Default to user role
+      console.error("Error fetching user role:", error);
+      setRole("user"); // Default to user role
     }
   };
 
   useEffect(() => {
     // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Defer role fetching with setTimeout to prevent deadlock
-        if (session?.user) {
-          setTimeout(() => {
-            fetchUserRole(session.user.id);
-          }, 0);
-        } else {
-          setRole(null);
-        }
-        
-        setLoading(false);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      // Defer role fetching with setTimeout to prevent deadlock
+      if (session?.user) {
+        setTimeout(() => {
+          fetchUserRole(session.user.id);
+        }, 0);
+      } else {
+        setRole(null);
       }
-    );
+
+      setLoading(false);
+    });
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         setTimeout(() => {
           fetchUserRole(session.user.id);
         }, 0);
       }
-      
+
       setLoading(false);
     });
 
@@ -76,36 +87,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      
+      // const redirectUrl = `${window.location.origin}/`;
+      const redirectUrl = `https://zapmindshacktoberfest.netlify.app/`;
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            full_name: fullName
-          }
-        }
+            full_name: fullName,
+          },
+        },
       });
 
       if (error) {
         toast({
           title: "Sign up failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
         return { error };
       }
 
       toast({
         title: "Account created!",
-        description: "You can now sign in with your credentials."
+        description: "You can now sign in with your credentials.",
       });
 
       return { error: null };
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('An unexpected error occurred');
+      const err =
+        error instanceof Error
+          ? error
+          : new Error("An unexpected error occurred");
       return { error: err };
     }
   };
@@ -114,21 +129,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password,
       });
 
       if (error) {
         toast({
           title: "Sign in failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
         return { error };
       }
 
       return { error: null };
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('An unexpected error occurred');
+      const err =
+        error instanceof Error
+          ? error
+          : new Error("An unexpected error occurred");
       return { error: err };
     }
   };
@@ -136,12 +154,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      
+
       if (error) {
         toast({
           title: "Sign out failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
         throw error;
       }
@@ -149,17 +167,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       setSession(null);
       setRole(null);
-      
+
       toast({
-        title: "Signed out successfully"
+        title: "Signed out successfully",
       });
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, role, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user, session, role, loading, signUp, signIn, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -168,7 +188,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 };
