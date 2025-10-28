@@ -69,6 +69,7 @@ export const CreateTeamModal = ({ open, onOpenChange, onSuccess }: CreateTeamMod
       } else {
         navigate('/submit-project');
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       // Handle specific error cases
       let errorMessage = 'Failed to create team';

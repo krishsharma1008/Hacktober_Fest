@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Team Context
  * Manages team state and provides team operations throughout the application

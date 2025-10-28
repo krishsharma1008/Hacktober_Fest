@@ -25,7 +25,7 @@ export const NavigationHeader = () => {
 
   const navLinks = [
     { label: "Home", path: "/" },
-    { label: "Projects", path: "/projects" },
+    // { label: "Projects", path: "/projects" },
     { label: "Updates", path: "/updates" },
     { label: "Discussions", path: "/discussions" },
   ];
