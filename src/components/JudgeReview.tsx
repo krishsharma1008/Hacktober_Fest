@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 type CriteriaKey = "Criteria 1" | "Criteria 2" | "Criteria 3" | "Criteria 4";
 type CriteriaObj = Partial<Record<CriteriaKey, number>>;
@@ -46,6 +47,42 @@ export default function JudgeReview({ projectId }: Props) {
   // Public comments list
   const [publicComments, setPublicComments] = useState<PublicComment[]>([]);
 
+  // Check roles: admin or judge
+  const { data: isAdmin = false, isLoading: isAdminLoading } = useQuery({
+    queryKey: ["is-admin"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const userId = userRes?.user?.id;
+      if (!userId) return false;
+
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: userId,
+        _role: "admin",
+      });
+      if (error) throw error;
+      return Boolean(data);
+    },
+  });
+
+  const { data: isJudge = false, isLoading: isJudgeLoading } = useQuery({
+    queryKey: ["is-judge"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const userId = userRes?.user?.id;
+      if (!userId) return false;
+
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: userId,
+        _role: "judge",
+      });
+      if (error) throw error;
+      return Boolean(data);
+    },
+  });
+
+  // Combine roles
+  const canScore = !isAdminLoading && !isJudgeLoading && (isAdmin || isJudge);
+
   const average = useMemo(() => {
     const vals = (Object.values(criteria) as Array<number | undefined>).filter(
       (v): v is number => typeof v === "number" && !isNaN(v)
@@ -60,13 +97,13 @@ export default function JudgeReview({ projectId }: Props) {
     (async () => {
       setLoading(true);
       try {
-        // Current judge
+        // Get current user ID
         const { data: userRes } = await supabase.auth.getUser();
         const uid = userRes?.user?.id ?? null;
         setJudgeId(uid);
 
-        // Load my existing feedback (so I can edit)
-        if (uid) {
+        // 🟢 Load judge feedback only if admin/judge
+        if (uid && canScore) {
           const { data: my, error: myErr } = await supabase
             .from("judge_feedback")
             .select("*")
@@ -78,7 +115,6 @@ export default function JudgeReview({ projectId }: Props) {
 
           if (my) {
             setFeedbackId(my.id);
-            // criteria JSON → fields
             const c = my.criteria || {};
             setCriteria({
               "Criteria 1": isFinite(Number(c["Criteria 1"]))
@@ -99,7 +135,7 @@ export default function JudgeReview({ projectId }: Props) {
           }
         }
 
-        // Load public comments for this project
+        // 🟡 Always load public comments
         const { data: pub, error: pubErr } = await supabase
           .from("project_feedback_public")
           .select("*")
@@ -115,7 +151,7 @@ export default function JudgeReview({ projectId }: Props) {
         setLoading(false);
       }
     })();
-  }, [projectId]);
+  }, [projectId, canScore]);
 
   const setScore = (key: CriteriaKey, raw: string) => {
     const v = raw === "" ? undefined : Math.max(0, Math.min(10, Number(raw)));
@@ -141,6 +177,10 @@ export default function JudgeReview({ projectId }: Props) {
   };
 
   const save = async () => {
+    if (!canScore) {
+      toast.error("Only judges or admins can submit scores.");
+      return;
+    }
     const err = validate();
     if (err) {
       toast.error(err);
@@ -198,7 +238,7 @@ export default function JudgeReview({ projectId }: Props) {
     }
   };
 
-  if (loading) {
+  if (loading || isAdminLoading || isJudgeLoading) {
     return (
       <Card className="mt-6">
         <CardHeader>
@@ -214,83 +254,86 @@ export default function JudgeReview({ projectId }: Props) {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Judge Review</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {(
-              [
-                "Criteria 1",
-                "Criteria 2",
-                "Criteria 3",
-                "Criteria 4",
-              ] as CriteriaKey[]
-            ).map((k) => (
-              <div
-                key={k}
-                className="flex items-center justify-between rounded-md border p-2"
-              >
-                <Label className="text-sm font-medium text-muted-foreground">
-                  {k}
-                </Label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={10}
-                  step={1}
-                  className="w-16 h-8 text-center text-sm"
-                  value={
-                    typeof criteria[k] === "number" && !isNaN(criteria[k]!)
-                      ? String(criteria[k])
-                      : ""
-                  }
-                  onChange={(e) => setScore(k, e.target.value)}
-                  placeholder="0"
-                />
-              </div>
-            ))}
-          </div>
+      {/* ✅ Only Admins or Judges see this scoring card */}
+      {canScore && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Judge Review</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {(
+                [
+                  "Criteria 1",
+                  "Criteria 2",
+                  "Criteria 3",
+                  "Criteria 4",
+                ] as CriteriaKey[]
+              ).map((k) => (
+                <div
+                  key={k}
+                  className="flex items-center justify-between rounded-md border p-2"
+                >
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    {k}
+                  </Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={10}
+                    step={1}
+                    className="w-16 h-8 text-center text-sm"
+                    value={
+                      typeof criteria[k] === "number" && !isNaN(criteria[k]!)
+                        ? String(criteria[k])
+                        : ""
+                    }
+                    onChange={(e) => setScore(k, e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+              ))}
+            </div>
 
-          {/* Average */}
-          <div className="text-sm text-muted-foreground">
-            Average:{" "}
-            <span className="font-semibold">
-              {average !== null ? `${average} / 10` : "—"}
-            </span>
-          </div>
+            {/* Average */}
+            <div className="text-sm text-muted-foreground">
+              Average:{" "}
+              <span className="font-semibold">
+                {average !== null ? `${average} / 10` : "—"}
+              </span>
+            </div>
 
-          {/* Comment (public) */}
-          <div className="grid gap-2">
-            <Label>Comment (public)</Label>
-            <Textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Share feedback visible to participants & audience"
-            />
-          </div>
+            {/* Comment (public) */}
+            <div className="grid gap-2">
+              <Label>Comment (public)</Label>
+              <Textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Share feedback visible to participants & audience"
+              />
+            </div>
 
-          {/* Note (private) */}
-          <div className="grid gap-2">
-            <Label>Private Note (judges & admins only)</Label>
-            <Textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Personal note, not publicly visible"
-            />
-          </div>
+            {/* Note (private) */}
+            <div className="grid gap-2">
+              <Label>Private Note (judges & admins only)</Label>
+              <Textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Personal note, not publicly visible"
+              />
+            </div>
 
-          <div className="flex justify-end">
-            <Button onClick={save} disabled={saving}>
-              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {feedbackId ? "Update Feedback" : "Save Feedback"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="flex justify-end">
+              <Button onClick={save} disabled={saving}>
+                {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {feedbackId ? "Update Feedback" : "Save Feedback"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Public comments panel */}
+      {/* ✅ Public Comments — visible to everyone */}
       <Card>
         <CardHeader>
           <CardTitle>Public Comments</CardTitle>

@@ -48,12 +48,6 @@ const ProjectDetail = () => {
   const [hasLiked, setHasLiked] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
 
-  // const isAdmin = user?.role === "admin";
-  // const isAdmin =
-  //   user?.role === "admin" ||
-  //   user?.user_metadata?.role === "admin" ||
-  //   user?.app_metadata?.role === "admin";
-
   const { data: project, isLoading } = useQuery({
     queryKey: ["project", projectId],
     queryFn: async () => {
