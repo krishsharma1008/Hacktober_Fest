@@ -41,12 +41,9 @@ export const OverviewTab = ({ onRegisterClick }: OverviewTabProps) => {
       <section className="container mx-auto px-4">
         <Card className="shadow-medium border-4 border-primary bg-card/90 backdrop-blur-sm">
           <CardContent className="p-8 md:p-12">
-            <h2 className="text-2xl md:text-3xl font-retro mb-6 text-center text-shadow-retro">About the Event</h2>
+            <h2 className="text-2xl md:text-3xl font-retro mb-6 text-center text-shadow-retro">About HacktoberFest</h2>
             <p className="text-base md:text-lg text-foreground text-center max-w-3xl mx-auto leading-relaxed font-sans">
-              Hacktoberfest 2025 is a 48-hour innovation sprint where Zapcom's brightest minds come together 
-              to build cutting-edge solutions. Work alongside mentors, collaborate with peers, and transform 
-              your ideas into reality. Whether you're an engineer, designer, or product manager, this is your 
-              opportunity to make an impact.
+              What can you do in 48 hours? How about solving a challenge to build the next big thing in tech at Zapcom? The best part though - you get to work alongside mentors, collaborate with peers, and pull a Steve Jobs-esque presentation, because you could be building the next Apple. Know how Facebook started? That could be you next, and here's your opportunity. So, Game On!!
             </p>
           </CardContent>
         </Card>
@@ -54,7 +51,7 @@ export const OverviewTab = ({ onRegisterClick }: OverviewTabProps) => {
 
       {/* Key Info Grid */}
       <section className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-retro mb-8 text-center text-shadow-retro">Key Information</h2>
+        <h2 className="text-2xl md:text-3xl font-retro mb-8 text-center text-shadow-retro">Mission Briefing</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card className="shadow-medium border-4 border-primary hover:border-primary-glow transition-all hover:scale-105 bg-card/90 backdrop-blur-sm">
             <CardContent className="p-6 text-center">
@@ -92,26 +89,46 @@ export const OverviewTab = ({ onRegisterClick }: OverviewTabProps) => {
 
       {/* Timeline */}
       <section className="container mx-auto px-4 pb-24">
-        <h2 className="text-2xl md:text-3xl font-retro mb-8 text-center text-shadow-retro">Event Timeline</h2>
-        <div className="max-w-3xl mx-auto space-y-6">
+        <h2 className="text-2xl md:text-3xl font-retro mb-8 text-center text-shadow-retro">Mission Milestones</h2>
+        <div className="max-w-3xl mx-auto space-y-8">
           {[
-            { date: "Oct 1–23", title: "Registration Open", desc: "Sign up with your team" },
-            { date: "Oct 18", title: "Mentor Assignments", desc: "Meet your mentors and start planning" },
-            { date: "Oct 30", title: "Kickoff & Theme Reveal", desc: "Event begins with theme announcement" },
-            { date: "Oct 30–31", title: "Build Phase", desc: "48 hours to bring your ideas to life" },
-            { date: "Oct 31", title: "Demos & Judging", desc: "Present your projects and win prizes" },
-          ].map((item, idx) => (
-            <Card key={idx} className="shadow-medium border-4 border-primary hover:border-primary-glow transition-all hover:scale-[1.02] bg-card/90 backdrop-blur-sm">
-              <CardContent className="p-6 flex flex-col md:flex-row items-start gap-6">
-                <div className="bg-accent text-accent-foreground shadow-medium px-4 py-3 font-retro text-xs min-w-[120px] text-center">
-                  {item.date}
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-retro text-sm md:text-base mb-2">{item.title}</h3>
-                  <p className="text-foreground font-sans">{item.desc}</p>
-                </div>
-              </CardContent>
-            </Card>
+            {
+              date: "Oct 29",
+              events: [
+                { title: "5 PM: KICK OFF & OPENING CEREMONY", desc: "Event begins with kickoff and opening ceremony" },
+                { title: "8 PM: CHECK POINT 1", desc: "First checkpoint" },
+              ]
+            },
+            {
+              date: "Oct 30",
+              events: [
+                { title: "10 AM: CHECK POINT 2", desc: "Second checkpoint" },
+                { title: "5 PM: How to Pitch your Hack", desc: "Training session on pitching your project" },
+                { title: "6 PM: CHECK POINT 3", desc: "Third checkpoint" },
+              ]
+            },
+            {
+              date: "Oct 31",
+              events: [
+                { title: "10 AM: CHECK POINT 4", desc: "Fourth checkpoint" },
+                { title: "1 PM: FINAL CHECK POINT", desc: "Final checkpoint" },
+                { title: "3 PM: CLOSING BELL & SUBMISSIONS", desc: "Submissions close" },
+                { title: "3:30 PM: PRESENTATIONS AND AWARDS", desc: "Present your projects and win prizes" },
+                { title: "7 PM: BEERS AND STUFF", desc: "Celebration time" },
+              ]
+            },
+          ].map((day, idx) => (
+            <div key={idx} className="space-y-4">
+              <h3 className="text-xl font-retro text-primary border-b-2 border-primary pb-2">{day.date}</h3>
+              {day.events.map((event, eventIdx) => (
+                <Card key={eventIdx} className="shadow-medium border-4 border-primary hover:border-primary-glow transition-all hover:scale-[1.02] bg-card/90 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <h4 className="font-retro text-sm md:text-base mb-2">{event.title}</h4>
+                    <p className="text-foreground font-sans">{event.desc}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           ))}
         </div>
       </section>

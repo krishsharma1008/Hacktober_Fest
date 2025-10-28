@@ -47,7 +47,7 @@ export const RulesTab = () => {
           <CardContent className="space-y-3 font-sans">
             <div className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-              <p className="text-foreground">All code must be written during the event (Oct 30–31, 2025)</p>
+              <p className="text-foreground">All code must be written during the event (Oct 29–31, 2025)</p>
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
@@ -163,16 +163,6 @@ export const RulesTab = () => {
               <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
               <p className="text-foreground">Follow organizer instructions and event schedules</p>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* IP Note */}
-        <Card className="shadow-medium border-4 border-accent bg-accent/10 backdrop-blur-sm">
-          <CardContent className="p-6 font-sans">
-            <p className="text-sm text-foreground">
-              <strong>Intellectual Property:</strong> Participants retain ownership of their projects. 
-              Zapcom reserves the right to showcase winning projects for promotional purposes with proper attribution.
-            </p>
           </CardContent>
         </Card>
 
