@@ -262,7 +262,7 @@ const ProjectDetail = () => {
                 </Button>
               )}
 
-              {(isAdmin || canEdit) && (
+              {isAdmin && (
                 <Button
                   variant="destructive"
                   onClick={handleDelete}
