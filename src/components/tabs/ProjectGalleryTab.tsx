@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Grid3x3, List, Heart, Eye, ExternalLink, Github, Play } from "lucide-react";
+import {
+  Search,
+  Grid3x3,
+  List,
+  Heart,
+  Eye,
+  ExternalLink,
+  Github,
+  Play,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -8,7 +17,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useProjectInteractions } from "@/hooks/use-project-interactions";
@@ -17,9 +31,18 @@ import type { Tables } from "@/integrations/supabase/types";
 type Project = Tables<"projects">;
 
 const tags = [
-  "All", "AI/ML", "Web", "Mobile", "Cloud", "Automation", 
-  "Data/Analytics", "DevTools", "HealthTech", "FinTech", 
-  "Sustainability", "Open Source"
+  "All",
+  "AI/ML",
+  "WEB",
+  "Mobile",
+  "Cloud",
+  "Automation",
+  "Data/Analytics",
+  "DevTools",
+  "HealthTech",
+  "FinTech",
+  "Sustainability",
+  "Open Source",
 ];
 
 const sortOptions = [
@@ -30,8 +53,15 @@ const sortOptions = [
 ];
 
 // Project Like Button Component
-const ProjectLikeButton = ({ projectId, likes }: { projectId: string; likes: number }) => {
-  const { userLiked, toggleLike, isTogglingLike } = useProjectInteractions(projectId);
+const ProjectLikeButton = ({
+  projectId,
+  likes,
+}: {
+  projectId: string;
+  likes: number;
+}) => {
+  const { userLiked, toggleLike, isTogglingLike } =
+    useProjectInteractions(projectId);
   const { user } = useAuth();
 
   const handleLikeClick = (e: React.MouseEvent) => {
@@ -47,12 +77,12 @@ const ProjectLikeButton = ({ projectId, likes }: { projectId: string; likes: num
       onClick={handleLikeClick}
       disabled={isTogglingLike}
       className="flex items-center gap-1 text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
-      title={user ? (userLiked ? 'Unlike' : 'Like') : 'Sign in to like'}
+      title={user ? (userLiked ? "Unlike" : "Like") : "Sign in to like"}
     >
-      <Heart 
+      <Heart
         className={`w-4 h-4 transition-all ${
-          userLiked ? 'fill-red-500 text-red-500' : ''
-        } ${isTogglingLike ? 'scale-110' : ''}`} 
+          userLiked ? "fill-red-500 text-red-500" : ""
+        } ${isTogglingLike ? "scale-110" : ""}`}
       />
       {likes || 0}
     </button>
@@ -67,7 +97,9 @@ export const ProjectGalleryTab = () => {
   const [sortBy, setSortBy] = useState("recent");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const selectedProjectInteractions = useProjectInteractions(selectedProject?.id || '');
+  const selectedProjectInteractions = useProjectInteractions(
+    selectedProject?.id || ""
+  );
 
   // Record view when project modal opens
   useEffect(() => {
@@ -77,17 +109,17 @@ export const ProjectGalleryTab = () => {
   }, [selectedProject?.id, selectedProjectInteractions]);
 
   const { data: projects = [], isLoading } = useQuery<Project[]>({
-    queryKey: ['projects'],
+    queryKey: ["projects"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .eq('status', 'submitted')
-        .order('created_at', { ascending: false });
-      
+        .from("projects")
+        .select("*")
+        .eq("status", "submitted")
+        .order("created_at", { ascending: false });
+
       if (error) throw error;
       return (data || []) as Project[];
-    }
+    },
   });
 
   const toggleTag = (tag: string) => {
@@ -102,19 +134,22 @@ export const ProjectGalleryTab = () => {
   };
 
   const filteredProjects = projects.filter((p) => {
-    const title = p.title || '';
-    const teamName = p.team_name || '';
-    const description = p.description || '';
+    const title = p.title || "";
+    const teamName = p.team_name || "";
+    const description = p.description || "";
     const projectTags = p.tags || [];
-    
+
     const matchesSearch =
       title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       teamName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      projectTags.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      projectTags.some((t: string) =>
+        t.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
     const matchesTags =
-      activeTags.includes("All") || projectTags.some((t: string) => activeTags.includes(t));
+      activeTags.includes("All") ||
+      projectTags.some((t: string) => activeTags.includes(t));
 
     return matchesSearch && matchesTags;
   });
@@ -126,7 +161,9 @@ export const ProjectGalleryTab = () => {
       case "alpha":
         return a.title.localeCompare(b.title);
       default:
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        return (
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
     }
   });
 
@@ -203,7 +240,9 @@ export const ProjectGalleryTab = () => {
         </div>
       ) : sortedProjects.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-muted-foreground">No projects match your filters. Clear filters to see all projects.</p>
+          <p className="text-muted-foreground">
+            No projects match your filters. Clear filters to see all projects.
+          </p>
         </div>
       ) : (
         <div
@@ -216,7 +255,7 @@ export const ProjectGalleryTab = () => {
           {sortedProjects.map((project) => {
             const images = project.images || [];
             const projectTags = project.tags || [];
-            
+
             return (
               <Card
                 key={project.id}
@@ -248,8 +287,12 @@ export const ProjectGalleryTab = () => {
                   </div>
                 </div>
                 <CardContent className="p-4">
-                  <h3 className="font-semibold text-lg mb-1 line-clamp-1">{project.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-3 line-clamp-1">{project.team_name}</p>
+                  <h3 className="font-semibold text-lg mb-1 line-clamp-1">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-1">
+                    {project.team_name}
+                  </p>
                   <div className="flex flex-wrap gap-1 mb-3">
                     {projectTags.slice(0, 3).map((tag: string) => (
                       <Badge key={tag} variant="secondary" className="text-xs">
@@ -258,7 +301,10 @@ export const ProjectGalleryTab = () => {
                     ))}
                   </div>
                   <div className="flex items-center gap-4 text-sm">
-                    <ProjectLikeButton projectId={project.id} likes={project.likes || 0} />
+                    <ProjectLikeButton
+                      projectId={project.id}
+                      likes={project.likes || 0}
+                    />
                     <span className="flex items-center gap-1 text-muted-foreground">
                       <Eye className="w-4 h-4" />
                       {project.views || 0}
@@ -272,25 +318,40 @@ export const ProjectGalleryTab = () => {
       )}
 
       {/* Project Modal */}
-      <Dialog open={!!selectedProject} onOpenChange={() => setSelectedProject(null)}>
+      <Dialog
+        open={!!selectedProject}
+        onOpenChange={() => setSelectedProject(null)}
+      >
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           {selectedProject && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl">{selectedProject.title}</DialogTitle>
-                <p className="text-muted-foreground">by {selectedProject.team_name}</p>
+                <DialogTitle className="text-2xl">
+                  {selectedProject.title}
+                </DialogTitle>
+                <p className="text-muted-foreground">
+                  by {selectedProject.team_name}
+                </p>
               </DialogHeader>
 
               <div className="space-y-6">
                 {/* Media Gallery */}
-                {(selectedProject.cover_image || (selectedProject.images && selectedProject.images.length > 0)) && (
+                {(selectedProject.cover_image ||
+                  (selectedProject.images &&
+                    selectedProject.images.length > 0)) && (
                   <div className="aspect-video bg-muted rounded-lg overflow-hidden">
                     <img
-                      src={selectedProject.cover_image || selectedProject.images[0]}
+                      src={
+                        selectedProject.cover_image || selectedProject.images[0]
+                      }
                       alt={selectedProject.title}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        if (selectedProject.cover_image && selectedProject.images && selectedProject.images.length > 0) {
+                        if (
+                          selectedProject.cover_image &&
+                          selectedProject.images &&
+                          selectedProject.images.length > 0
+                        ) {
                           e.currentTarget.src = selectedProject.images[0];
                         }
                       }}
@@ -313,7 +374,11 @@ export const ProjectGalleryTab = () => {
                 <div className="flex flex-wrap gap-3">
                   {selectedProject.demo_video_url && (
                     <Button size="sm" variant="default" asChild>
-                      <a href={selectedProject.demo_video_url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={selectedProject.demo_video_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <Play className="w-4 h-4 mr-2" />
                         Demo Video
                       </a>
@@ -321,7 +386,11 @@ export const ProjectGalleryTab = () => {
                   )}
                   {selectedProject.github_url && (
                     <Button size="sm" variant="outline" asChild>
-                      <a href={selectedProject.github_url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={selectedProject.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <Github className="w-4 h-4 mr-2" />
                         Repository
                       </a>
@@ -329,7 +398,11 @@ export const ProjectGalleryTab = () => {
                   )}
                   {selectedProject.presentation_url && (
                     <Button size="sm" variant="outline" asChild>
-                      <a href={selectedProject.presentation_url} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={selectedProject.presentation_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         <ExternalLink className="w-4 h-4 mr-2" />
                         Presentation
                       </a>
@@ -346,28 +419,39 @@ export const ProjectGalleryTab = () => {
                     <TabsTrigger value="learnings">Learnings</TabsTrigger>
                   </TabsList>
                   <TabsContent value="description" className="mt-4">
-                    <p className="text-muted-foreground">{selectedProject.description || 'No description provided.'}</p>
+                    <p className="text-muted-foreground">
+                      {selectedProject.description ||
+                        "No description provided."}
+                    </p>
                   </TabsContent>
                   <TabsContent value="problem" className="mt-4">
-                    <p className="text-muted-foreground">{selectedProject.problem || 'No problem statement provided.'}</p>
+                    <p className="text-muted-foreground">
+                      {selectedProject.problem ||
+                        "No problem statement provided."}
+                    </p>
                   </TabsContent>
                   <TabsContent value="solution" className="mt-4">
-                    <p className="text-muted-foreground">{selectedProject.solution || 'No solution provided.'}</p>
+                    <p className="text-muted-foreground">
+                      {selectedProject.solution || "No solution provided."}
+                    </p>
                   </TabsContent>
                   <TabsContent value="learnings" className="mt-4">
                     <p className="text-muted-foreground">
                       {selectedProject.learnings || "No learnings provided."}
                     </p>
-                    {selectedProject.tech_stack && selectedProject.tech_stack.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="font-semibold mb-2">Tech Stack:</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedProject.tech_stack.map((tech: string) => (
-                            <Badge key={tech} variant="outline">{tech}</Badge>
-                          ))}
+                    {selectedProject.tech_stack &&
+                      selectedProject.tech_stack.length > 0 && (
+                        <div className="mt-4">
+                          <h4 className="font-semibold mb-2">Tech Stack:</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedProject.tech_stack.map((tech: string) => (
+                              <Badge key={tech} variant="outline">
+                                {tech}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </TabsContent>
                 </Tabs>
 
@@ -379,10 +463,12 @@ export const ProjectGalleryTab = () => {
                       disabled={selectedProjectInteractions.isTogglingLike}
                       className="flex items-center gap-2 text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
                     >
-                      <Heart 
+                      <Heart
                         className={`w-5 h-5 transition-all ${
-                          selectedProjectInteractions.userLiked ? 'fill-red-500 text-red-500' : ''
-                        }`} 
+                          selectedProjectInteractions.userLiked
+                            ? "fill-red-500 text-red-500"
+                            : ""
+                        }`}
                       />
                       {selectedProject.likes || 0} likes
                     </button>

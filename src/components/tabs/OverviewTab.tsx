@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CalendarCheck, UserSquare2, Award, Timer } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import hacktoberfestImage from "@/assets/Hacktober fest.png";
@@ -132,7 +133,6 @@ export const OverviewTab = ({ onRegisterClick }: OverviewTabProps) => {
           ))}
         </div>
       </section>
-
     </div>
   );
 };

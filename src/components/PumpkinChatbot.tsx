@@ -80,14 +80,15 @@ export const PumpkinChatbot = () => {
 
     try {
       const apiKey = import.meta.env.VITE_SARVAM_API_KEY;
-      
+
       if (!apiKey) {
         throw new Error("Sarvam API key not configured");
       }
 
       // Prepare conversation history ensuring the first message after system is from the user
       const firstUserIndex = messages.findIndex((m) => m.role === "user");
-      const priorConversation = firstUserIndex >= 0 ? messages.slice(firstUserIndex) : [];
+      const priorConversation =
+        firstUserIndex >= 0 ? messages.slice(firstUserIndex) : [];
 
       const conversationMessages = [
         {
@@ -106,62 +107,74 @@ export const PumpkinChatbot = () => {
 
       console.log("Sending request to Sarvam AI...");
 
-      const response = await fetch("https://api.sarvam.ai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "api-subscription-key": apiKey,
-        },
-        body: JSON.stringify({
-          model: (import.meta.env.VITE_SARVAM_MODEL as string) || "sarvam-m",
-          messages: conversationMessages,
-          temperature: 0.7,
-          top_p: 0.9,
-          max_tokens: 512,
-        }),
-      });
+      const response = await fetch(
+        "https://api.sarvam.ai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "api-subscription-key": apiKey,
+          },
+          body: JSON.stringify({
+            model: (import.meta.env.VITE_SARVAM_MODEL as string) || "sarvam-m",
+            messages: conversationMessages,
+            temperature: 0.7,
+            top_p: 0.9,
+            max_tokens: 512,
+          }),
+        }
+      );
 
       console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error("API Error Response:", errorText);
-        throw new Error(`API request failed: ${response.status} - ${errorText}`);
+        throw new Error(
+          `API request failed: ${response.status} - ${errorText}`
+        );
       }
 
       const data = await response.json();
       console.log("API Response:", data);
-      
+
       const assistantMessage: Message = {
         role: "assistant",
-        content: data.choices?.[0]?.message?.content || data.message || "I apologize, but I couldn't generate a response. Please try again.",
+        content:
+          data.choices?.[0]?.message?.content ||
+          data.message ||
+          "I apologize, but I couldn't generate a response. Please try again.",
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Chatbot error:", error);
-      
+
       // More specific error message
-      let errorMsg = "I apologize, but I'm having trouble connecting right now. Please try again in a moment! 🎃";
-      
+      let errorMsg =
+        "I apologize, but I'm having trouble connecting right now. Please try again in a moment! 🎃";
+
       if (error instanceof Error) {
         console.error("Error details:", error.message);
         if (error.message.includes("401") || error.message.includes("403")) {
-          errorMsg = "API authentication issue. Please check the API key configuration. 🔑";
+          errorMsg =
+            "API authentication issue. Please check the API key configuration. 🔑";
         } else if (error.message.includes("429")) {
-          errorMsg = "Too many requests. Please wait a moment before trying again. ⏰";
+          errorMsg =
+            "Too many requests. Please wait a moment before trying again. ⏰";
         } else if (error.message.includes("500")) {
-          errorMsg = "The AI service is temporarily unavailable. Please try again shortly. 🔧";
+          errorMsg =
+            "The AI service is temporarily unavailable. Please try again shortly. 🔧";
         }
       }
-      
+
       toast.error("Failed to get response from AI.");
-      
+
       const errorMessage: Message = {
         role: "assistant",
         content: errorMsg,
       };
-      
+
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -181,7 +194,9 @@ export const PumpkinChatbot = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-accent hover:bg-secondary shadow-strong border-4 border-accent hover:border-secondary transition-all hover:scale-110 active:translate-y-1 animate-float"
+          // className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-accent hover:bg-secondary shadow-strong border-4 border-accent hover:border-secondary transition-all hover:scale-110 active:translate-y-1 animate-float"
+          className="fixed z-50 p-3 rounded-full bg-accent hover:bg-secondary shadow-strong border-4 border-accent hover:border-secondary transition-all hover:scale-110 active:translate-y-1 animate-float 
+             right-[max(1.5rem,env(safe-area-inset-right))] bottom-[max(1.5rem,env(safe-area-inset-bottom))]"
           aria-label="Open Product Strategy Assistant"
         >
           <PumpkinIcon size={56} />
@@ -190,14 +205,29 @@ export const PumpkinChatbot = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <Card className="fixed bottom-6 right-6 z-50 w-[400px] h-[600px] flex flex-col shadow-strong border-4 border-primary bg-card animate-scale-in">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b-4 border-primary bg-primary/20">
+        // <Card className="fixed bottom-6 right-6 z-50 w-[400px] h-[600px] flex flex-col shadow-strong border-4 border-primary bg-card animate-scale-in">
+        //   {/* Header */}
+        //   <div className="flex items-center justify-between p-4 border-b-4 border-primary bg-primary/20">
+        <Card
+          className="fixed z-50 flex flex-col shadow-strong border-4 border-primary bg-card animate-scale-in
+             left-4 right-4 md:left-auto md:right-6
+             bottom-[max(1.5rem,env(safe-area-inset-bottom))] md:bottom-6
+              w-[400px] max-w-[calc(100vw-2rem)]
+              max-h-[min(95dvh,720px)]
+              h-[min(95dvh,720px)]
+             rounded-xl overflow-hidden"
+        >
+          {/* Header now sticky so close button is always accessible */}
+          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b-4 border-primary bg-primary/20">
             <div className="flex items-center gap-3">
               <PumpkinIcon size={32} />
               <div>
-                <h3 className="font-retro text-xs text-foreground">Product Assistant</h3>
-                <p className="text-xs text-muted-foreground font-sans">Strategy & Ideation</p>
+                <h3 className="font-retro text-xs text-foreground">
+                  Product Assistant
+                </h3>
+                <p className="text-xs text-muted-foreground font-sans">
+                  Strategy & Ideation
+                </p>
               </div>
             </div>
             <Button
@@ -229,15 +259,19 @@ export const PumpkinChatbot = () => {
                   >
                     {message.role === "assistant" ? (
                       <div className="prose prose-invert max-w-none prose-p:text-sm prose-li:text-sm prose-strong:text-sm prose-headings:text-sm prose-h1:text-sm prose-h2:text-sm prose-h3:text-sm prose-h4:text-sm prose-h5:text-sm prose-h6:text-sm prose-headings:my-2 prose-p:my-2 prose-li:my-1">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {message.content}
+                        </ReactMarkdown>
                       </div>
                     ) : (
-                      <p className="text-sm font-sans whitespace-pre-wrap break-words">{message.content}</p>
+                      <p className="text-sm font-sans whitespace-pre-wrap break-words">
+                        {message.content}
+                      </p>
                     )}
                   </div>
                 </div>
               ))}
-              
+
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="bg-card border-2 border-primary text-foreground rounded p-3">
@@ -245,7 +279,7 @@ export const PumpkinChatbot = () => {
                   </div>
                 </div>
               )}
-              
+
               <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
@@ -283,4 +317,3 @@ export const PumpkinChatbot = () => {
     </>
   );
 };
-
