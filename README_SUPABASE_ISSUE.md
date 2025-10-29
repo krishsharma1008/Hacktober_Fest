@@ -148,3 +148,4 @@ Then wait 2 minutes and run the test command.
 
 This will work. The tables are ready. PostgREST just needs to see them.
 
+

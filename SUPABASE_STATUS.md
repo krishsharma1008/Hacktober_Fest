@@ -44,3 +44,4 @@ PostgREST may automatically reload the schema on its next restart cycle (could b
 
 **Next Step: Restart the API service manually in Supabase Dashboard**
 
+

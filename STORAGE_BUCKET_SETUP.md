@@ -101,3 +101,6 @@ If you already have a storage bucket you want to use:
 3. Make sure the bucket is public
 4. Apply the storage policies above (adjust bucket_id accordingly)
 
+
+
+

@@ -88,3 +88,4 @@ $$;
 -- Grant execute permission to authenticated users
 GRANT EXECUTE ON FUNCTION public.toggle_project_like(UUID) TO authenticated;
 
+

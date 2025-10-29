@@ -1,0 +1,56 @@
+
+================================================================================
+UPDATE: Sunday, October 19, 2025 - 4:25 PM
+================================================================================
+
+TASK: Make shreyes.desai@zapcg.com an Admin User
+-------------------------------------------------
+
+REQUEST:
+- User requested that shreyes.desai@zapcg.com be granted admin access
+- This requires running SQL in Supabase to update the user_roles table
+
+SOLUTION IMPLEMENTED:
+1. Created SQL script: MAKE_ADMIN_USER.sql
+   - Finds user by email in auth.users table
+   - Inserts admin role into public.user_roles table
+   - Verifies the role was assigned successfully
+   - Safe to run multiple times (uses ON CONFLICT DO NOTHING)
+
+2. Created instructions: Make_Shreyes_Admin_Instructions.md
+   - Step-by-step guide to run the SQL in Supabase dashboard
+   - Includes troubleshooting tips
+   - Lists admin privileges
+
+HOW TO EXECUTE:
+1. Go to Supabase SQL Editor
+2. Copy contents of MAKE_ADMIN_USER.sql
+3. Paste and run the query
+4. Verify the success message
+
+SQL SCRIPT DETAILS:
+- Uses DO block to safely handle user lookup
+- Checks if user exists before assigning role
+- Inserts 'admin' role into user_roles table
+- Includes verification query at the end
+
+ADMIN PRIVILEGES:
+- Access to Admin Dashboard
+- Edit/delete any project
+- Manage user roles
+- Create/edit/delete announcements
+- Moderate discussions
+- Manage registrations
+- Full system access
+
+FILES CREATED:
+- MAKE_ADMIN_USER.sql (SQL script to run)
+- Make_Shreyes_Admin_Instructions.md (instructions)
+
+IMPORTANT NOTES:
+- The user must have signed up first before running the script
+- If user doesn't exist, script will show error "User with email not found"
+- After running, user needs to sign out and sign back in to refresh role
+
+STATUS: SQL script ready to be executed in Supabase
+================================================================================

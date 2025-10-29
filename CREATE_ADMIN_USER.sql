@@ -106,3 +106,4 @@ SELECT
     ELSE 'NO - User does not have admin access'
   END AS admin_status;
 
+

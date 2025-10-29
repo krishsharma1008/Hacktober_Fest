@@ -45,3 +45,5 @@ After running the script, you should see:
 - Sign out and sign back in to refresh the user session
 - Check that you're running the script in the correct Supabase project
 
+
+

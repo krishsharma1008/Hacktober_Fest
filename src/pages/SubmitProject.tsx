@@ -481,12 +481,15 @@ const SubmitProject = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="solution">Solution</Label>
+                  <Label htmlFor="solution">
+                    Solution <span className="text-destructive">*</span>
+                  </Label>
                   <Textarea
                     id="solution"
                     name="solution"
                     value={formData.solution}
                     onChange={handleChange}
+                    required
                     placeholder="How does your project solve it?"
                     rows={3}
                   />
@@ -494,23 +497,30 @@ const SubmitProject = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="techStack">Tech Stack (comma-separated)</Label>
+                <Label htmlFor="techStack">
+                  Tech Stack (comma-separated){" "}
+                  <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="techStack"
                   name="techStack"
                   value={formData.techStack}
                   onChange={handleChange}
+                  required
                   placeholder="React, Node.js, PostgreSQL, TailwindCSS"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="learnings">Key Learnings</Label>
+                <Label htmlFor="learnings">
+                  Key Learnings <span className="text-destructive">*</span>
+                </Label>
                 <Textarea
                   id="learnings"
                   name="learnings"
                   value={formData.learnings}
                   onChange={handleChange}
+                  required
                   placeholder="What did you learn during this hackathon?"
                   rows={3}
                 />
@@ -530,37 +540,47 @@ const SubmitProject = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="githubUrl">Repository URL</Label>
+                  <Label htmlFor="githubUrl">
+                    Repository URL <span className="text-destructive">*</span>
+                  </Label>
                   <Input
                     id="githubUrl"
                     name="githubUrl"
                     type="url"
                     value={formData.githubUrl}
                     onChange={handleChange}
+                    required
                     placeholder="https://github.com/..."
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="presentationUrl">Presentation URL</Label>
+                <Label htmlFor="presentationUrl">
+                  Presentation URL <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="presentationUrl"
                   name="presentationUrl"
                   type="url"
                   value={formData.presentationUrl}
                   onChange={handleChange}
+                  required
                   placeholder="https://docs.google.com/presentation/..."
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="tags">Tags (comma-separated)</Label>
+                <Label htmlFor="tags">
+                  Tags (comma-separated){" "}
+                  <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="tags"
                   name="tags"
                   value={formData.tags}
                   onChange={handleChange}
+                  required
                   placeholder="AI, Healthcare, Education"
                 />
               </div>

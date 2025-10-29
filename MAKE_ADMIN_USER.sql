@@ -44,3 +44,5 @@ AND ur.role = 'admin';
 -- If the above query returns a row, the admin role is successfully assigned!
 -- User: shreyes.desai@zapcg.com
 -- Role: admin
+
+

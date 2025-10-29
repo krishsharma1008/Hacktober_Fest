@@ -318,3 +318,6 @@ COMMENT ON TABLE public.teams IS 'Teams for hackathon collaboration';
 COMMENT ON TABLE public.team_members IS 'Team membership with roles (owner, admin, member)';
 COMMENT ON COLUMN public.projects.team_id IS 'Optional team association - teams can only have one project';
 
+
+
+

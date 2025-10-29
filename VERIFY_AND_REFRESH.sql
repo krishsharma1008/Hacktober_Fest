@@ -62,3 +62,4 @@ NOTIFY pgrst, 'reload config';
 SELECT 'Schema cache refresh signal sent!' as message;
 SELECT 'If tables still show as missing, go to Supabase Dashboard > Settings > API > Restart API' as next_step;
 
+
