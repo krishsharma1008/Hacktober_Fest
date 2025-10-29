@@ -133,23 +133,46 @@ export const ProjectGalleryTab = () => {
     }
   };
 
+  // const filteredProjects = projects.filter((p) => {
+  //   const title = p.title || "";
+  //   const teamName = p.team_name || "";
+  //   const description = p.description || "";
+  //   const projectTags = p.tags || [];
+
+  //   const matchesSearch =
+  //     title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     teamName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     projectTags.some((t: string) =>
+  //       t.toLowerCase().includes(searchQuery.toLowerCase())
+  //     );
+
+  //   const matchesTags =
+  //     activeTags.includes("All") ||
+  //     projectTags.some((t: string) => activeTags.includes(t));
+
+  //   return matchesSearch && matchesTags;
+  // });
+
   const filteredProjects = projects.filter((p) => {
     const title = p.title || "";
     const teamName = p.team_name || "";
     const description = p.description || "";
-    const projectTags = p.tags || [];
+    const projectTags = (p.tags || []).map(String);
+
+    const q = searchQuery.toLowerCase();
 
     const matchesSearch =
-      title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      teamName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      projectTags.some((t: string) =>
-        t.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      title.toLowerCase().includes(q) ||
+      teamName.toLowerCase().includes(q) ||
+      description.toLowerCase().includes(q) ||
+      projectTags.some((t) => t.toLowerCase().includes(q));
 
+    // ✅ Case-insensitive tag comparison
+    const activeSet = new Set(activeTags.map((t) => t.toLowerCase()));
     const matchesTags =
-      activeTags.includes("All") ||
-      projectTags.some((t: string) => activeTags.includes(t));
+      activeSet.has("all") ||
+      projectTags.some((t) => activeSet.has(t.toLowerCase()));
 
     return matchesSearch && matchesTags;
   });
