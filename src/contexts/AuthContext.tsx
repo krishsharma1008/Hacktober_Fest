@@ -11,6 +11,20 @@ import { useToast } from "@/hooks/use-toast";
 
 type UserRole = "user" | "admin" | "judge";
 
+// interface AuthContextType {
+//   user: User | null;
+//   session: Session | null;
+//   role: UserRole | null;
+//   loading: boolean;
+//   signUp: (
+//     email: string,
+//     password: string,
+//     fullName: string
+//   ) => Promise<{ error: Error | null }>;
+//   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+//   signOut: () => Promise<void>;
+// }
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -23,6 +37,10 @@ interface AuthContextType {
   ) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+
+  // NEW ↓
+  requestPasswordReset: (email: string) => Promise<{ error: Error | null }>;
+  updatePassword: (newPassword: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -85,10 +103,62 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // inside AuthProvider component (same file)
+  const requestPasswordReset = async (email: string) => {
+    try {
+      const redirectUrl = `${window.location.origin}/reset-password`;
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: redirectUrl,
+      });
+
+      if (error) {
+        toast({
+          title: "Reset request failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return { error };
+      }
+
+      toast({
+        title: "Reset link sent",
+        description: "Check your email for a password reset link.",
+      });
+      return { error: null };
+    } catch (e) {
+      const err = e instanceof Error ? e : new Error("Unexpected error");
+      return { error: err };
+    }
+  };
+
+  const updatePassword = async (newPassword: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) {
+        toast({
+          title: "Password update failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return { error };
+      }
+      toast({
+        title: "Password updated",
+        description: "You can now sign in with your new password.",
+      });
+      return { error: null };
+    } catch (e) {
+      const err = e instanceof Error ? e : new Error("Unexpected error");
+      return { error: err };
+    }
+  };
+
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      // const redirectUrl = `${window.location.origin}/`;
-      const redirectUrl = `https://zapmindshacktoberfest.netlify.app/`;
+      const redirectUrl = `${window.location.origin}/`;
+      // const redirectUrl = `https://zapmindshacktoberfest.netlify.app/`;
 
       const { error } = await supabase.auth.signUp({
         email,
@@ -178,7 +248,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, role, loading, signUp, signIn, signOut }}
+      value={{
+        user,
+        session,
+        role,
+        loading,
+        signUp,
+        signIn,
+        signOut,
+        requestPasswordReset, // NEW
+        updatePassword, // NEW
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -20,6 +20,7 @@ import Updates from "./pages/Updates";
 import Discussions from "./pages/Discussions";
 import PacManGame from "./pages/PacManGame";
 import NotFound from "./pages/NotFound";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,8 @@ const App = () => (
             <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />  {/* <-- add this */}
+
             {/* <Route path="/projects" element={<Projects />} /> */}
             <Route path="/project/:id" element={<ProjectDetail />} />
             <Route path="/updates" element={<Updates />} />

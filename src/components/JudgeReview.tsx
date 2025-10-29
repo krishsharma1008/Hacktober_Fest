@@ -10,8 +10,24 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 
-type CriteriaKey = "Criteria 1" | "Criteria 2" | "Criteria 3" | "Criteria 4";
+type CriteriaKey =
+  | "Innovation & Creativity"
+  | "Relevance to Theme"
+  | "Feasibility & Market Viability"
+  | "Business Impact"
+  | "Presentation & Message Delivery"
+  | "Team Diversity";
+
 type CriteriaObj = Partial<Record<CriteriaKey, number>>;
+
+const CRITERIA: { key: CriteriaKey; weight: number }[] = [
+  { key: "Innovation & Creativity", weight: 0.25 },
+  { key: "Relevance to Theme", weight: 0.2 },
+  { key: "Feasibility & Market Viability", weight: 0.2 },
+  { key: "Business Impact", weight: 0.15 },
+  { key: "Presentation & Message Delivery", weight: 0.15 },
+  { key: "Team Diversity", weight: 0.05 },
+];
 
 interface PublicComment {
   id: string;
@@ -33,10 +49,12 @@ export default function JudgeReview({ projectId }: Props) {
 
   // Editable fields
   const [criteria, setCriteria] = useState<CriteriaObj>({
-    "Criteria 1": undefined,
-    "Criteria 2": undefined,
-    "Criteria 3": undefined,
-    "Criteria 4": undefined,
+    "Innovation & Creativity": undefined,
+    "Relevance to Theme": undefined,
+    "Feasibility & Market Viability": undefined,
+    "Business Impact": undefined,
+    "Presentation & Message Delivery": undefined,
+    "Team Diversity": undefined,
   });
   const [comment, setComment] = useState("");
   const [note, setNote] = useState("");
@@ -84,13 +102,22 @@ export default function JudgeReview({ projectId }: Props) {
   const canScore = !isAdminLoading && !isJudgeLoading && (isAdmin || isJudge);
 
   const average = useMemo(() => {
-    const vals = (Object.values(criteria) as Array<number | undefined>).filter(
-      (v): v is number => typeof v === "number" && !isNaN(v)
-    );
-    if (!vals.length) return null;
-    return (
-      Math.round((vals.reduce((a, b) => a + b, 0) / vals.length) * 100) / 100
-    );
+    // Only include criteria that have numeric values
+    let totalWeight = 0;
+    let weightedSum = 0;
+
+    for (const { key, weight } of CRITERIA) {
+      const v = criteria[key];
+      if (typeof v === "number" && !isNaN(v)) {
+        // v is 0..10
+        weightedSum += v * weight;
+        totalWeight += weight;
+      }
+    }
+
+    if (totalWeight === 0) return null;
+    // Scale remains 0..10 because weights sum to 1.0
+    return Math.round(weightedSum * 100) / 100;
   }, [criteria]);
 
   useEffect(() => {
@@ -117,17 +144,29 @@ export default function JudgeReview({ projectId }: Props) {
             setFeedbackId(my.id);
             const c = my.criteria || {};
             setCriteria({
-              "Criteria 1": isFinite(Number(c["Criteria 1"]))
-                ? Number(c["Criteria 1"])
+              "Innovation & Creativity": isFinite(
+                Number(c["Innovation & Creativity"])
+              )
+                ? Number(c["Innovation & Creativity"])
                 : undefined,
-              "Criteria 2": isFinite(Number(c["Criteria 2"]))
-                ? Number(c["Criteria 2"])
+              "Relevance to Theme": isFinite(Number(c["Relevance to Theme"]))
+                ? Number(c["Relevance to Theme"])
                 : undefined,
-              "Criteria 3": isFinite(Number(c["Criteria 3"]))
-                ? Number(c["Criteria 3"])
+              "Feasibility & Market Viability": isFinite(
+                Number(c["Feasibility & Market Viability"])
+              )
+                ? Number(c["Feasibility & Market Viability"])
                 : undefined,
-              "Criteria 4": isFinite(Number(c["Criteria 4"]))
-                ? Number(c["Criteria 4"])
+              "Business Impact": isFinite(Number(c["Business Impact"]))
+                ? Number(c["Business Impact"])
+                : undefined,
+              "Presentation & Message Delivery": isFinite(
+                Number(c["Presentation & Message Delivery"])
+              )
+                ? Number(c["Presentation & Message Delivery"])
+                : undefined,
+              "Team Diversity": isFinite(Number(c["Team Diversity"]))
+                ? Number(c["Team Diversity"])
                 : undefined,
             });
             setComment(my.comment ?? "");
@@ -162,13 +201,8 @@ export default function JudgeReview({ projectId }: Props) {
   };
 
   const validate = () => {
-    for (const k of [
-      "Criteria 1",
-      "Criteria 2",
-      "Criteria 3",
-      "Criteria 4",
-    ] as CriteriaKey[]) {
-      const v = criteria[k];
+    for (const { key } of CRITERIA) {
+      const v = criteria[key];
       if (typeof v !== "number" || isNaN(v))
         return "Please score all criteria (0–10).";
       if (v < 0 || v > 10) return "Scores must be between 0 and 10.";
@@ -191,10 +225,16 @@ export default function JudgeReview({ projectId }: Props) {
     setSaving(true);
     try {
       const cleanCriteria: Record<string, number> = {
-        "Criteria 1": Number(criteria["Criteria 1"]),
-        "Criteria 2": Number(criteria["Criteria 2"]),
-        "Criteria 3": Number(criteria["Criteria 3"]),
-        "Criteria 4": Number(criteria["Criteria 4"]),
+        "Innovation & Creativity": Number(criteria["Innovation & Creativity"]),
+        "Relevance to Theme": Number(criteria["Relevance to Theme"]),
+        "Feasibility & Market Viability": Number(
+          criteria["Feasibility & Market Viability"]
+        ),
+        "Business Impact": Number(criteria["Business Impact"]),
+        "Presentation & Message Delivery": Number(
+          criteria["Presentation & Message Delivery"]
+        ),
+        "Team Diversity": Number(criteria["Team Diversity"]),
       };
 
       const payload: any = {
@@ -261,21 +301,18 @@ export default function JudgeReview({ projectId }: Props) {
             <CardTitle>Judge Review</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            {/* Weighted 6 Criteria Inputs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {(
-                [
-                  "Criteria 1",
-                  "Criteria 2",
-                  "Criteria 3",
-                  "Criteria 4",
-                ] as CriteriaKey[]
-              ).map((k) => (
+              {CRITERIA.map(({ key, weight }) => (
                 <div
-                  key={k}
+                  key={key}
                   className="flex items-center justify-between rounded-md border p-2"
                 >
                   <Label className="text-sm font-medium text-muted-foreground">
-                    {k}
+                    {key}{" "}
+                    <span className="text-xs">
+                      ({Math.round(weight * 100)}%)
+                    </span>
                   </Label>
                   <Input
                     type="number"
@@ -284,11 +321,14 @@ export default function JudgeReview({ projectId }: Props) {
                     step={1}
                     className="w-16 h-8 text-center text-sm"
                     value={
-                      typeof criteria[k] === "number" && !isNaN(criteria[k]!)
-                        ? String(criteria[k])
+                      typeof criteria[key] === "number" &&
+                      !isNaN(criteria[key]!)
+                        ? String(criteria[key])
                         : ""
                     }
-                    onChange={(e) => setScore(k, e.target.value)}
+                    onChange={(e) =>
+                      setScore(key as CriteriaKey, e.target.value)
+                    }
                     placeholder="0"
                   />
                 </div>

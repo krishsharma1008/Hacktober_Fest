@@ -194,7 +194,7 @@ const ProjectDetail = () => {
       // Invalidate lists so UI updates elsewhere
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       // Navigate out of detail view
-      navigate("/projects");
+      navigate("/admin-dashboard");
     },
     onError: () => {
       toast.error("Failed to delete project");
@@ -226,7 +226,7 @@ const ProjectDetail = () => {
         <NavigationHeader />
         <main className="flex-1 container mx-auto px-4 py-8 text-center">
           <h1 className="text-2xl font-bold mb-4">Project not found</h1>
-          <Button onClick={() => navigate("/projects")}>
+          <Button onClick={() => navigate("/overview")}>
             Back to Projects
           </Button>
         </main>
@@ -262,7 +262,7 @@ const ProjectDetail = () => {
                 </Button>
               )}
 
-              {(isAdmin || canEdit) && (
+              {isAdmin && (
                 <Button
                   variant="destructive"
                   onClick={handleDelete}
