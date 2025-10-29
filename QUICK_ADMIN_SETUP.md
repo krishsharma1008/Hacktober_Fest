@@ -143,3 +143,6 @@ Once setup is complete, you'll have access to:
 
 **Need help?** Check the database migrations in `/supabase/migrations/` for role system details.
 
+
+
+

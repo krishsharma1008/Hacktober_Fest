@@ -120,3 +120,4 @@ SELECT 'SUCCESS: Functions created' AS status
 WHERE EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'toggle_project_like')
   AND EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'record_project_view');
 
+

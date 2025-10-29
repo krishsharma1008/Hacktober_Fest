@@ -110,3 +110,4 @@ export const PumpkinIcon = ({ className = "", size = 48 }: PumpkinIconProps) => 
   );
 };
 
+

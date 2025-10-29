@@ -81,3 +81,4 @@ $$;
 GRANT EXECUTE ON FUNCTION public.record_project_view(UUID, TEXT) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.record_project_view(UUID, TEXT) TO anon;
 
+
