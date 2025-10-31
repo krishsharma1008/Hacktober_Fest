@@ -467,48 +467,57 @@ export default function Leaderboard() {
       : "";
 
   return (
-    <div className="min-h-screen container mx-auto px-4 py-10">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-bold tracking-tight">Leaderboard 🏆</h1>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => refetch()}>
-            Refresh
-          </Button>
-          <Button variant="outline" onClick={() => navigate(-1)}>
-            ← Back
-          </Button>
+    <div className="min-h-screen w-full px-6 py-10">
+      <div className="max-w-[95%] mx-auto">
+        <div className="flex flex-col items-center mb-8 gap-4">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
+              Leaderboard 🏆
+            </h1>
+            <p className="text-muted-foreground mt-2">Real-time project rankings</p>
+          </div>
+          <div className="flex gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => refetch()}
+              className="shadow-sm hover:shadow-md transition-shadow"
+            >
+              Refresh
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(-1)}
+              className="shadow-sm hover:shadow-md transition-shadow"
+            >
+              ← Back
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold">
-            Projects by Average Score (Live Updates)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-b border-muted">
-                <TableHead className="w-[70px] text-center">Rank</TableHead>
-                <TableHead>Project</TableHead>
-                <TableHead>Team</TableHead>
-                <TableHead className="text-right">Avg Score</TableHead>
-              </TableRow>
-            </TableHeader>
+        <Card className="shadow-2xl border-2 overflow-hidden bg-card/95 backdrop-blur">
+          <CardContent className="p-8">
+            <div className="w-full space-y-4">
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-6 px-6 py-4 bg-muted/50 rounded-lg border border-muted">
+                <div className="col-span-2 text-center">
+                  <span className="font-bold text-base">Rank</span>
+                </div>
+                <div className="col-span-6">
+                  <span className="font-bold text-base">Project</span>
+                </div>
+                <div className="col-span-4 text-right">
+                  <span className="font-bold text-base">Avg Score</span>
+                </div>
+              </div>
 
-            <TableBody asChild>
-              <motion.tbody layout>
+              {/* Table Body */}
+              <motion.div layout className="space-y-3">
                 <AnimatePresence initial={false}>
                   {rows.length === 0 ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={4}
-                        className="text-center text-muted-foreground"
-                      >
-                        No scores yet.
-                      </TableCell>
-                    </TableRow>
+                    <div className="text-center py-16">
+                      <Medal className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
+                      <p className="text-lg text-muted-foreground">No scores yet.</p>
+                    </div>
                   ) : (
                     rows.map((r, idx) => {
                       const delta = rankDeltas[r.project_id] || 0;
@@ -516,7 +525,7 @@ export default function Leaderboard() {
                       const movedDown = delta < 0;
 
                       return (
-                        <motion.tr
+                        <motion.div
                           key={r.project_id}
                           layout
                           initial={{ opacity: 0, y: 10 }}
@@ -527,83 +536,96 @@ export default function Leaderboard() {
                             stiffness: 300,
                             damping: 25,
                           }}
-                          className={`border-b border-muted hover:bg-muted/30 transition-colors`}
+                          className={`grid grid-cols-12 gap-6 px-6 py-5 rounded-lg border transition-all hover:shadow-md ${
+                            idx + 1 <= 3
+                              ? 'bg-primary/5 border-primary/20 hover:bg-primary/10'
+                              : 'bg-card border-border hover:bg-muted/30'
+                          }`}
                         >
-                          <TableCell className="text-center font-semibold">
+                          {/* Rank Column */}
+                          <div className="col-span-2 flex items-center justify-center">
                             {idx + 1 <= 3 ? (
-                              <div className="flex justify-center items-center gap-1">
+                              <div className="flex items-center gap-3">
                                 <Medal
-                                  className={`h-5 w-5 ${medalColor(idx + 1)}`}
-                                  strokeWidth={2}
+                                  className={`h-7 w-7 ${medalColor(idx + 1)}`}
+                                  strokeWidth={2.5}
+                                  fill="currentColor"
                                 />
-                                <span className="text-sm">{idx + 1}</span>
+                                <span className="text-2xl font-bold">{idx + 1}</span>
                               </div>
                             ) : (
-                              <span className="text-muted-foreground">
+                              <span className="text-xl font-semibold text-muted-foreground">
                                 {idx + 1}
                               </span>
                             )}
-                          </TableCell>
+                          </div>
 
-                          <TableCell className="font-medium max-w-[300px] truncate">
+                          {/* Project Column */}
+                          <div className="col-span-6 flex flex-col justify-center gap-1">
                             <Link
                               to={`/projects/${r.project_id}`}
-                              className="hover:underline"
+                              className="font-bold text-xl hover:text-primary hover:underline transition-colors leading-tight"
                             >
                               {r.project_name}
                             </Link>
-                          </TableCell>
+                            <span className="text-sm text-muted-foreground font-medium">
+                              {r.team_name}
+                            </span>
+                          </div>
 
-                          <TableCell className="text-muted-foreground">
-                            {r.team_name}
-                          </TableCell>
-
-                          <TableCell className="text-right">
-                            <div className="flex flex-col items-end">
-                              <div className="tabular-nums font-medium">
-                                {r.project_avg !== null
-                                  ? r.project_avg.toFixed(2)
-                                  : "—"}
-                              </div>
-
-                              {r.project_avg !== null && (
-                                <div className="mt-1 h-1.5 w-28 rounded-full bg-muted overflow-hidden">
-                                  <motion.div
-                                    key={r.project_id + String(r.project_avg)}
-                                    initial={{ width: 0 }}
-                                    animate={{
-                                      width: `${(r.project_avg / 10) * 100}%`,
-                                    }}
-                                    transition={{
-                                      type: "tween",
-                                      duration: 0.4,
-                                    }}
-                                    className="h-full bg-primary"
-                                  />
-                                </div>
+                          {/* Score Column */}
+                          <div className="col-span-4 flex flex-col items-end justify-center gap-2">
+                            <div className="flex items-center gap-3">
+                              <span className="tabular-nums font-bold text-3xl">
+                                {r.project_avg !== null ? r.project_avg.toFixed(2) : "—"}
+                              </span>
+                              {movedUp && (
+                                <span className="text-xs text-green-600 font-bold bg-green-100 px-2.5 py-1 rounded-full">
+                                  ↑ {delta}
+                                </span>
+                              )}
+                              {movedDown && (
+                                <span className="text-xs text-red-600 font-bold bg-red-100 px-2.5 py-1 rounded-full">
+                                  ↓ {Math.abs(delta)}
+                                </span>
                               )}
                             </div>
-                            {movedUp && (
-                              <span className="text-xs text-green-600">
-                                ↑ moved up {delta}
-                              </span>
+
+                            {r.project_avg !== null && (
+                              <div className="h-3 w-48 rounded-full bg-muted/50 overflow-hidden shadow-inner border border-muted">
+                                <motion.div
+                                  key={r.project_id + String(r.project_avg)}
+                                  initial={{ width: 0 }}
+                                  animate={{
+                                    width: `${(r.project_avg / 10) * 100}%`,
+                                  }}
+                                  transition={{
+                                    type: "tween",
+                                    duration: 0.4,
+                                  }}
+                                  className={`h-full ${
+                                    r.project_avg >= 8
+                                      ? 'bg-green-500'
+                                      : r.project_avg >= 6
+                                      ? 'bg-blue-500'
+                                      : r.project_avg >= 4
+                                      ? 'bg-yellow-500'
+                                      : 'bg-orange-500'
+                                  }`}
+                                />
+                              </div>
                             )}
-                            {movedDown && (
-                              <span className="text-xs text-red-600">
-                                ↓ moved down {Math.abs(delta)}
-                              </span>
-                            )}
-                          </TableCell>
-                        </motion.tr>
+                          </div>
+                        </motion.div>
                       );
                     })
                   )}
                 </AnimatePresence>
-              </motion.tbody>
-            </TableBody>
-          </Table>
+              </motion.div>
+            </div>
         </CardContent>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
