@@ -361,7 +361,7 @@
 //   );
 // }
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -417,6 +417,21 @@ export default function Leaderboard() {
     };
   }, [refetch]);
 
+  const prevRankRef = useRef<Record<string, number>>({});
+  const rankDeltas = useMemo(() => {
+    const currentRanks: Record<string, number> = {};
+    rows.forEach((r, idx) => (currentRanks[r.project_id] = idx));
+    const deltas: Record<string, number> = {};
+    const prev = prevRankRef.current;
+    for (const r of rows) {
+      const prevRank = prev[r.project_id];
+      const nowRank = currentRanks[r.project_id];
+      deltas[r.project_id] =
+        typeof prevRank === "number" ? prevRank - nowRank : 0;
+    }
+    prevRankRef.current = currentRanks;
+    return deltas;
+  }, [rows]);
 
   if (isLoading) {
     return (
@@ -496,12 +511,16 @@ export default function Leaderboard() {
               <motion.div layout className="space-y-3">
                 <AnimatePresence initial={false}>
                   {rows.length === 0 ? (
-                    <div className="text-center py-16 col-span-12">
+                    <div className="text-center py-16">
                       <Medal className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
                       <p className="text-lg text-muted-foreground">No scores yet.</p>
                     </div>
                   ) : (
                     rows.map((r, idx) => {
+                      const delta = rankDeltas[r.project_id] || 0;
+                      const movedUp = delta > 0;
+                      const movedDown = delta < 0;
+
                       return (
                         <motion.div
                           key={r.project_id}
