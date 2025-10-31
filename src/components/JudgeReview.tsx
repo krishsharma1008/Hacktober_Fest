@@ -376,7 +376,7 @@ export default function JudgeReview({ projectId }: Props) {
       {/* ✅ Public Comments — visible to everyone */}
       <Card>
         <CardHeader>
-          <CardTitle>Public Comments</CardTitle>
+          <CardTitle>Judge Comments</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {publicComments.length === 0 ? (
@@ -387,7 +387,7 @@ export default function JudgeReview({ projectId }: Props) {
                 <div key={c.id} className="rounded-lg border p-3">
                   <div className="text-sm whitespace-pre-wrap">{c.comment}</div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    Avg: {c.average_score ?? "—"} •{" "}
+                    {/* Avg: {c.average_score ?? "—"} •{" "} */}
                     {new Date(c.created_at).toLocaleString()}
                   </div>
                 </div>

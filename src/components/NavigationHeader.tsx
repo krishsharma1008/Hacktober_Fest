@@ -88,6 +88,13 @@ export const NavigationHeader = () => {
                       Admin Dashboard
                     </DropdownMenuItem>
                   )}
+
+                  {role === 'admin' && (
+                    <DropdownMenuItem onClick={() => navigate('/admin-leaderboard')}>
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Leaderboard
+                    </DropdownMenuItem>
+                  )}
                   
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>

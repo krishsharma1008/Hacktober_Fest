@@ -10,6 +10,7 @@ import { DiscussionsTab } from "@/components/tabs/DiscussionsTab";
 import { RegistrationModal } from "@/components/RegistrationModal";
 import { PixelatedClouds } from "@/components/PixelatedClouds";
 import { PixelatedGrass } from "@/components/PixelatedGrass";
+import Leaderboard from "@/components/tabs/Leaderboard";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -25,6 +26,8 @@ const Index = () => {
         return <RulesTab />;
       case "gallery":
         return <ProjectGalleryTab />;
+      case "leaderboard":
+        return <Leaderboard />;
       case "updates":
         return <UpdatesTab />;
       case "discussions":

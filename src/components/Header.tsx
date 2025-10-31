@@ -18,6 +18,7 @@ const guestTabs = [
   { id: "participants", label: "Participants" },
   { id: "rules", label: "Rules" },
   { id: "gallery", label: "Project Gallery" },
+  { id: "leaderboard", label: "LeaderBoard" },
   { id: "updates", label: "Updates" },
   { id: "discussions", label: "Discussions" },
 ];

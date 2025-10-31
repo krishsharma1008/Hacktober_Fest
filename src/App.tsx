@@ -21,6 +21,7 @@ import Discussions from "./pages/Discussions";
 import PacManGame from "./pages/PacManGame";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./pages/ResetPassword";
+import AdminLeaderboard from "./components/admin/AdminLeaderboard";
 
 const queryClient = new QueryClient();
 
@@ -34,64 +35,69 @@ const App = () => (
           <PumpkinChatbot />
           <BrowserRouter>
             <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/reset-password" element={<ResetPassword />} />  {/* <-- add this */}
-
-            {/* <Route path="/projects" element={<Projects />} /> */}
-            <Route path="/project/:id" element={<ProjectDetail />} />
-            <Route path="/updates" element={<Updates />} />
-            <Route path="/discussions" element={<Discussions />} />
-            <Route path="/pacman-game" element={<PacManGame />} />
-            
-            {/* User Routes */}
-            <Route 
-              path="/submit-project" 
-              element={
-                <ProtectedRoute allowedRoles={['user', 'admin']}>
-                  <SubmitProject />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/edit-project/:id" 
-              element={
-                <ProtectedRoute allowedRoles={['user', 'admin']}>
-                  <EditProject />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/my-projects" 
-              element={
-                <ProtectedRoute allowedRoles={['user', 'admin']}>
-                  <MyProjects />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Judge Routes */}
-            <Route 
-              path="/judge-dashboard" 
-              element={
-                <ProtectedRoute allowedRoles={['judge', 'admin']}>
-                  <JudgeDashboard />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Admin Routes */}
-            <Route 
-              path="/admin-dashboard" 
-              element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/reset-password" element={<ResetPassword />} />{" "}
+              {/* <-- add this */}
+              {/* <Route path="/projects" element={<Projects />} /> */}
+              <Route path="/project/:id" element={<ProjectDetail />} />
+              <Route path="/updates" element={<Updates />} />
+              <Route path="/discussions" element={<Discussions />} />
+              <Route path="/pacman-game" element={<PacManGame />} />
+              {/* User Routes */}
+              <Route
+                path="/submit-project"
+                element={
+                  <ProtectedRoute allowedRoles={["user", "admin"]}>
+                    <SubmitProject />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/edit-project/:id"
+                element={
+                  <ProtectedRoute allowedRoles={["user", "admin"]}>
+                    <EditProject />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-projects"
+                element={
+                  <ProtectedRoute allowedRoles={["user", "admin"]}>
+                    <MyProjects />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Judge Routes */}
+              <Route
+                path="/judge-dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["judge", "admin"]}>
+                    <JudgeDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Admin Routes */}
+              <Route
+                path="/admin-dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin-leaderboard"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminLeaderboard />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
