@@ -361,7 +361,7 @@
 //   );
 // }
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -417,21 +417,6 @@ export default function Leaderboard() {
     };
   }, [refetch]);
 
-  const prevRankRef = useRef<Record<string, number>>({});
-  const rankDeltas = useMemo(() => {
-    const currentRanks: Record<string, number> = {};
-    rows.forEach((r, idx) => (currentRanks[r.project_id] = idx));
-    const deltas: Record<string, number> = {};
-    const prev = prevRankRef.current;
-    for (const r of rows) {
-      const prevRank = prev[r.project_id];
-      const nowRank = currentRanks[r.project_id];
-      deltas[r.project_id] =
-        typeof prevRank === "number" ? prevRank - nowRank : 0;
-    }
-    prevRankRef.current = currentRanks;
-    return deltas;
-  }, [rows]);
 
   if (isLoading) {
     return (
@@ -502,11 +487,8 @@ export default function Leaderboard() {
                 <div className="col-span-2 text-center">
                   <span className="font-bold text-base">Rank</span>
                 </div>
-                <div className="col-span-6">
+                <div className="col-span-10">
                   <span className="font-bold text-base">Project</span>
-                </div>
-                <div className="col-span-4 text-right">
-                  <span className="font-bold text-base">Avg Score</span>
                 </div>
               </div>
 
@@ -514,16 +496,12 @@ export default function Leaderboard() {
               <motion.div layout className="space-y-3">
                 <AnimatePresence initial={false}>
                   {rows.length === 0 ? (
-                    <div className="text-center py-16">
+                    <div className="text-center py-16 col-span-12">
                       <Medal className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
                       <p className="text-lg text-muted-foreground">No scores yet.</p>
                     </div>
                   ) : (
                     rows.map((r, idx) => {
-                      const delta = rankDeltas[r.project_id] || 0;
-                      const movedUp = delta > 0;
-                      const movedDown = delta < 0;
-
                       return (
                         <motion.div
                           key={r.project_id}
@@ -561,57 +539,13 @@ export default function Leaderboard() {
                           </div>
 
                           {/* Project Column */}
-                          <div className="col-span-6 flex flex-col justify-center gap-1">
+                          <div className="col-span-10 flex flex-col justify-center gap-1">
                             <span className="font-bold text-xl leading-tight">
                               {r.project_name}
                             </span>
                             <span className="text-sm text-muted-foreground font-medium">
                               {r.team_name}
                             </span>
-                          </div>
-
-                          {/* Score Column */}
-                          <div className="col-span-4 flex flex-col items-end justify-center gap-2">
-                            <div className="flex items-center gap-3">
-                              <span className="tabular-nums font-bold text-3xl">
-                                {r.project_avg !== null ? r.project_avg.toFixed(2) : "—"}
-                              </span>
-                              {movedUp && (
-                                <span className="text-xs text-green-600 font-bold bg-green-100 px-2.5 py-1 rounded-full">
-                                  ↑ {delta}
-                                </span>
-                              )}
-                              {movedDown && (
-                                <span className="text-xs text-red-600 font-bold bg-red-100 px-2.5 py-1 rounded-full">
-                                  ↓ {Math.abs(delta)}
-                                </span>
-                              )}
-                            </div>
-
-                            {r.project_avg !== null && (
-                              <div className="h-3 w-48 rounded-full bg-muted/50 overflow-hidden shadow-inner border border-muted">
-                                <motion.div
-                                  key={r.project_id + String(r.project_avg)}
-                                  initial={{ width: 0 }}
-                                  animate={{
-                                    width: `${(r.project_avg / 10) * 100}%`,
-                                  }}
-                                  transition={{
-                                    type: "tween",
-                                    duration: 0.4,
-                                  }}
-                                  className={`h-full ${
-                                    r.project_avg >= 8
-                                      ? 'bg-green-500'
-                                      : r.project_avg >= 6
-                                      ? 'bg-blue-500'
-                                      : r.project_avg >= 4
-                                      ? 'bg-yellow-500'
-                                      : 'bg-orange-500'
-                                  }`}
-                                />
-                              </div>
-                            )}
                           </div>
                         </motion.div>
                       );
