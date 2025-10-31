@@ -375,7 +375,7 @@ import {
 } from "@/components/ui/table";
 import { Loader2, Medal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Leaderboard() {
@@ -562,12 +562,9 @@ export default function Leaderboard() {
 
                           {/* Project Column */}
                           <div className="col-span-6 flex flex-col justify-center gap-1">
-                            <Link
-                              to={`/projects/${r.project_id}`}
-                              className="font-bold text-xl hover:text-primary hover:underline transition-colors leading-tight"
-                            >
+                            <span className="font-bold text-xl leading-tight">
                               {r.project_name}
-                            </Link>
+                            </span>
                             <span className="text-sm text-muted-foreground font-medium">
                               {r.team_name}
                             </span>

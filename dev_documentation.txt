@@ -5348,3 +5348,109 @@ TESTING NOTES:
 STATUS: ✅ Complete - Modern card-based grid layout
 ================================================================================
 
+
+================================================================================
+DATE & TIME: Friday, October 31, 2025 - Evening Session (Continued)
+TASK: Implement Tie Handling in Leaderboard - Shared Ranks for Same Scores
+================================================================================
+
+CONTEXT:
+- User asked what happens when projects have the same score
+- Current implementation: sequential ranking (1,2,3,4...) even for tied scores
+- Required: Standard Competition Ranking (1,2,2,4...) where tied scores share ranks
+
+PROBLEM:
+Previously, if two projects had the same score:
+- Project A: score 8.5 → Rank 2
+- Project B: score 8.5 → Rank 3 (incorrect)
+- Project C: score 7.0 → Rank 4
+
+SOLUTION IMPLEMENTED:
+
+1. **Created `rankedRows` computed array:**
+   ```typescript
+   const rankedRows = useMemo(() => {
+     let currentRank = 1;
+     let previousScore: number | null = null;
+     
+     return rows.map((row, idx) => {
+       if (row.project_avg === previousScore) {
+         // Same score = share the rank
+       } else {
+         // New score = update rank to current position (idx + 1)
+         currentRank = idx + 1;
+       }
+       previousScore = row.project_avg;
+       
+       return { ...row, rank: currentRank };
+     });
+   }, [rows]);
+   ```
+
+2. **Ranking Algorithm (Standard Competition Ranking):**
+   - Projects sorted by score (highest first, from backend)
+   - Compare each project's score with previous
+   - If same score → assign same rank
+   - If different score → assign rank based on position (skipping numbers)
+   
+   Example:
+   - Position 0, Score 9.0 → Rank 1
+   - Position 1, Score 8.5 → Rank 2
+   - Position 2, Score 8.5 → Rank 2 (tied)
+   - Position 3, Score 7.0 → Rank 4 (skip 3)
+
+3. **Updated Rank Change Tracking:**
+   - Modified to use `r.rank` instead of array index
+   - Rank deltas now properly reflect actual rank changes
+   - Tied projects maintain same rank even during updates
+
+4. **Updated UI Rendering:**
+   - Changed from `rows.map((r, idx)` to `rankedRows.map((r)`
+   - Display `r.rank` instead of `idx + 1`
+   - Top 3 highlighting uses `r.rank <= 3` instead of `idx + 1 <= 3`
+   - Medal colors assigned based on actual rank, not position
+
+5. **Maintains All Animations:**
+   - Framer-motion layout animations still work
+   - Rank change indicators (↑/↓) properly track rank changes
+   - Real-time updates preserve tie handling
+
+EXAMPLE SCENARIOS:
+
+**Scenario 1: Two-way tie for 2nd place**
+- Project A: 9.0 → Rank 1 🥇
+- Project B: 8.5 → Rank 2 🥈
+- Project C: 8.5 → Rank 2 🥈 (shared rank)
+- Project D: 7.5 → Rank 4 (skip rank 3)
+
+**Scenario 2: Three-way tie for 1st place**
+- Project A: 10.0 → Rank 1 🥇
+- Project B: 10.0 → Rank 1 🥇 (all get gold medal)
+- Project C: 10.0 → Rank 1 🥇
+- Project D: 9.0 → Rank 4 (skip ranks 2 and 3)
+
+**Scenario 3: Tie across medal boundary**
+- Project A: 9.5 → Rank 1 🥇
+- Project B: 9.0 → Rank 2 🥈
+- Project C: 8.5 → Rank 3 🥉
+- Project D: 8.5 → Rank 3 🥉 (both get bronze)
+- Project E: 7.0 → Rank 5
+
+FILES MODIFIED:
+- src/components/tabs/Leaderboard.tsx
+
+TECHNICAL DETAILS:
+- Ranking computation: O(n) time complexity
+- Uses `useMemo` to prevent unnecessary recalculations
+- Null scores handled (shown as "—")
+- Preserves all animation and real-time update functionality
+
+TESTING NOTES:
+- No new linter errors introduced
+- Works correctly with null/undefined scores
+- Maintains performance with large datasets
+- Rank change indicators still functional
+
+STATUS: ✅ Complete - Proper tie handling with Standard Competition Ranking
+================================================================================
+
